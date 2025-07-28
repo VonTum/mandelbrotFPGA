@@ -1,0 +1,438 @@
+
+
+
+module staticForLoop #(int TO) {
+
+    state int #(FROM: 0, TO) cur_iter
+    state bool cur_iter_valid
+
+    action start {
+        cur_iter = 0
+        cur_iter_valid = true
+    }
+    trigger iter : int #(FROM: 0, TO) cur
+    when cur_iter_valid {
+        iter(cur_iter)
+        when cur_iter == TO - 1 {
+            cur_iter_valid = false
+        } else {
+            cur_iter = cur_iter + 1
+        }
+    }
+}
+
+module LatencyOffsetAction #(T, int OFFSET) {
+    T stored_data
+    bool is_valid
+    
+    action in'0 : T din'0 {
+        is_valid = true
+        stored_data = din
+    } else {
+        is_valid = false
+    }
+
+    trigger out'OFFSET : T dout'OFFSET
+
+    when LatencyOffset #(OFFSET)(is_valid) {
+        out(LatencyOffset #(OFFSET)(stored_data))
+    }
+}
+
+module ActionScopeFix #(T) {
+    trigger out'0 : T dout'0
+
+    action in'0 : T din'0 {
+        out(din)
+    }
+}
+
+module ActionCrossDomain #(T) {
+    domain a
+
+    CrossDomain valid_cross
+    CrossDomain data_cross
+
+    action in'0 : T din'0 {
+        valid_cross.in = true
+        data_cross.in = din
+    } else {
+        valid_cross.in = false
+    }
+
+    domain b
+    trigger out'0 : T dout'0
+
+    when valid_cross.out {
+        out(data_cross.out)
+    }
+}
+
+module SlowIterator #(T, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
+    domain iter_domain
+    LatencyOffsetAction #(OFFSET : -COMPUTATION_LATENCY) next_iter_loop
+    CrossDomain iter_is_finised
+    ActionCrossDomain iter_with_initial_data
+    iter_is_finised.in = false
+    trigger iter'0 : T data'0 {
+        action next_iter'COMPUTATION_LATENCY : T new_data'COMPUTATION_LATENCY {
+            next_iter_loop.in(new_data)
+        } else {
+            iter_is_finised.in = true
+        }
+    }
+    when next_iter_loop.out : T loop_data {
+        iter(loop_data)
+    }
+    when iter_with_initial_data.out : T initial_data_cross {
+        iter(initial_data_cross)
+    }
+
+    domain request_domain
+
+    bool retry_loop = false
+    trigger request_new_data'0 {
+        action start_iteration'REQUEST_DATA_LATENCY : T initial_data'REQUEST_DATA_LATENCY {
+            iter_with_initial_data.in(initial_data_cross)
+        } else {
+            retry_loop = true
+        }
+    }
+    when iter_is_finised.out | LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop) {
+        request_new_data()
+    }
+
+    state bool last_reset_was_true
+    action reset {
+        last_reset_was_true = true
+    } else {
+        // Send down a one-clock pulse on reset release to get request_new_data started
+        when last_reset_was_true {
+            request_new_data()
+        }
+        last_reset_was_true = false
+    }
+}
+
+
+
+/// new_z = z² + c (z_0 = 0)
+
+/// |z| >= 2
+module MandelbrotStep {
+    interface MandelbrotStep : float z_r, float z_i, float c_r, float c_i -> float new_z_r, float new_z_i, bool is_done {
+        float z_sq_r = fp_sub(fp_mul(z_r, z_r), fp_mul(z_i, z_i))
+        float z_ri = fp_mul(z_r, z_i)
+        float z_sq_i = fp_neg(fp_add(z_ri, z_ri))
+
+        new_z_r = fp_add(z_sq_r, c_r)
+        new_z_i = fp_add(z_sq_i, c_i)
+
+        float radius_sq = fp_add(fp_mul(new_z_r, new_z_r), fp_mul(new_z_i, new_z_i))
+
+        float four = fp_fromfix(4 * pow2#(E: 32))
+        is_done = fp_gt(radius_sq, four)
+    }
+}
+
+module MandelbrotSlowIter {
+    domain request_domain
+    SlowIterator iter
+
+    trigger request_new_point'0
+
+    when iter.request_new_data {
+        request_new_point()
+    }
+
+    action start_iteration_for_new_point'4 : float x'4, float y'4 {
+        float zero = transmute #(T1: type int#(FROM: 0, TO: pow2#(E: 32)))(0)
+        float[4] initial_state = [zero, zero, x, y]
+
+        iter.start_iteration(initial_state)
+    }
+
+    domain iter_domain
+    trigger done
+    when iter.iter : float[4] state {
+        float z_r = state[0]
+        float z_i = state[1]
+        float c_r = state[2]
+        float c_i = state[3]
+
+        float new_z_r, float new_z_i, bool is_done = MandelbrotStep(z_r, z_i, c_r, c_i)
+
+        when is_done {
+            done()
+        } else {
+            iter.next_iter([new_z_r, new_z_i, c_r, c_i])
+        }
+    }
+}
+
+
+
+module SlowIterator2 #(InitialT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
+    domain iter_domain
+    CrossDomain iter_is_finised
+    ActionCrossDomain iter_with_initial_data
+    iter_is_finised.in = false
+
+    bool iter_continue = false
+    trigger iter'0 : int #(FROM: 0, TO: COMPUTATION_LATENCY+1) iter_sentinel_out'0 {
+        action continue'COMPUTATION_LATENCY {
+            iter_continue = true
+        } else {
+            iter_is_finised.in = true
+        }
+    }
+    trigger is_initial'0: InitialT initial_data'0
+
+    when LatencyOffset #(OFFSET: -COMPUTATION_LATENCY)(iter_continue) {
+        iter(0)
+    }
+    when iter_with_initial_data.out : InitialT initial_data_cross {
+        iter(0)
+        is_initial(initial_data_cross)
+    }
+
+    domain request_domain
+
+    bool retry_loop = false
+    trigger request_new_data'0 {
+        action start'REQUEST_DATA_LATENCY : InitialT initial_data'REQUEST_DATA_LATENCY {
+            iter_with_initial_data.in(initial_data_cross)
+        } else {
+            //retry_loop = true
+        }
+    }
+    when iter_is_finised.out | LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop) {
+        request_new_data()
+    }
+
+    state bool last_reset_was_true
+    action reset'0 {
+        last_reset_was_true = true
+    } else {
+        // Send down a one-clock pulse on reset release to get request_new_data started
+        when last_reset_was_true {
+            request_new_data()
+        }
+        last_reset_was_true = false
+    }
+}
+
+
+module SlowIteratorState #(T, int MAX_LATENCY, int LATENCY) {
+    assert #(C: LATENCY <= MAX_LATENCY)
+    assert #(C: LATENCY >= 0)
+
+    state T iter_state
+
+    action link'0 : int#(FROM: 0, TO: MAX_LATENCY) _sentinel'0 {
+        output T old'0
+        input T new'LATENCY
+
+        action init'0 : T initial_data'0 {
+            old = initial_data
+        } else {
+            old = iter_state
+        }
+
+        iter_state = LatencyOffset #(OFFSET: -LATENCY)(new)
+    }
+}
+
+/*module MandelbrotSlowIter2 {
+    gen int MAX_ITERATION = 1000
+
+    SlowIterator2 iter
+
+    domain reset
+    action rst {
+        iter.reset()
+    }
+
+    trigger request_new_point'0
+    when iter.request_new_data {
+        request_new_point()
+    }
+
+    action start'4 : float r'4, float i'4 {
+        iter.start([r, i])
+    }
+
+    domain iter_domain
+    trigger done'0: int iteration_count'0
+
+    SlowIteratorState #(T: type float) z_r
+    SlowIteratorState #(T: type float) z_i
+    SlowIteratorState #(T: type float) c_r
+    SlowIteratorState #(T: type float) c_i
+    SlowIteratorState #(T: type int #(FROM: 0, TO: MAX_ITERATION)) iteration
+    
+    float zero = fp_fromfix(0 * pow2#(E: 32))
+    when iter.iter : int sentinel {
+        z_r.link(sentinel)
+        z_i.link(sentinel)
+        c_r.link(sentinel)
+        c_i.link(sentinel)
+        iteration.link(sentinel)
+        
+
+        when iter.is_initial : float[2] init_data {
+            z_r.init(zero)
+            z_i.init(zero)
+            c_r.init(init_data[0])
+            c_i.init(init_data[1])
+            iteration.init(0)
+        }
+
+        MandelbrotStep step
+        z_r.new, z_i.new, bool is_done = step(z_r.old, z_i.old, c_r.old, c_i.old)
+        c_r.new = c_r.old
+        c_i.new = c_i.old
+        iteration.new = unsafe_int_cast#(FROM: 0, TO: MAX_ITERATION)(iteration.old + 1)
+
+        when is_done {
+            done(iteration.old)
+        } else {
+            iter.continue()
+        }
+    }
+}*/
+
+
+module MandelbrotStepFake {
+    interface MandelbrotStepFake : bool z_r'0, bool c_i'3 -> bool is_done'10 {
+        
+    }
+}
+
+module SlowIteratorStateLobo #(T, int LATENCY) {
+    assert #(C: LATENCY >= 0)
+
+    state T iter_state
+
+    output T old'0
+    input T new'LATENCY
+
+    old = iter_state
+
+    iter_state = LatencyOffset #(OFFSET: -LATENCY)(new)
+}
+
+module MandelbrotSlowIter3 {
+    SlowIteratorStateLobo c_i
+    SlowIteratorStateLobo z_r
+    
+    bool should_iter
+    when LatencyOffset#(OFFSET: -30)(should_iter) {
+        c_i.new = c_i.old
+        z_r.new = z_r.old
+
+        should_iter = z_r.old | c_i.old
+    }
+}
+
+
+module SlowIteratorLobotomized #(int COMPUTATION_LATENCY) {
+    domain iter_domain
+    CrossDomain iter_is_finised
+    ActionCrossDomain iter_with_initial_data
+    iter_is_finised.in = false
+
+    bool iter_continue = false
+    trigger iter'0 : int#(FROM: 0, TO: COMPUTATION_LATENCY) iter_sentinel_out'0 {
+        action continue'COMPUTATION_LATENCY {
+            iter_continue = true
+        } else {
+            iter_is_finised.in = true
+        }
+    }
+
+    when LatencyOffset #(OFFSET: -COMPUTATION_LATENCY)(iter_continue) {
+        iter(0)
+    }
+    when iter_with_initial_data.out : bool initial_data_cross {
+        iter(0)
+    }
+
+    domain request_domain
+
+}
+/*
+module MandelbrotSlowIterLobotomized {
+    gen int MAX_ITERATION = 1000
+
+    domain request_domain
+    SlowIteratorLobotomized iter
+
+    domain iter_domain
+    trigger done'0: int iteration_count'0
+
+    SlowIteratorState #(T: type int #(FROM: 0, TO: MAX_ITERATION)) iteration
+    
+    when iter.iter : bool sentinel {
+        iteration.link(20)
+        
+        when iter.is_initial : float[2] init_data {
+            float one = fp_fromfix(1 * pow2#(E: 32))
+            iteration.init(0)
+        }
+
+        reg reg iteration.new = (iteration.old + 1) % MAX_ITERATION
+
+        when iteration.old >= 100 {
+            done(iteration.old)
+        } else {
+            iter.continue()
+        }
+    }
+}
+
+
+module MandelbrotSlowIterLobotAgain {
+    gen int MAX_ITERATION = 1000
+
+    domain request_domain
+    SlowIterator2 #(COMPUTATION_LATENCY: 60, REQUEST_DATA_LATENCY : 20) iter
+
+    trigger request_new_point'0
+    when iter.request_new_data {
+        request_new_point()
+    }
+
+    action start'4 : float r'4, float i'4 {
+        iter.start([r, i])
+    }
+
+    domain iter_domain
+    trigger done'0: int iteration_count'0
+
+    SlowIteratorState #(T: type float) z_r
+    SlowIteratorState #(T: type float) z_r2
+    
+    when iter.iter : int sentinel {
+        z_r.link(sentinel)
+        z_r2.link(sentinel)
+        
+
+        float one = fp_fromfix(0 * pow2#(E: 32))
+        when iter.is_initial : float[2] init_data {
+            z_r.init(one)
+            z_r2.init(one)
+        }
+
+        z_r.new = fp_add(z_r.old, z_r.old)
+        z_r2.new = fp_add(z_r2.old, z_r2.old)
+
+        when fp_gt(z_r.old, one) {
+            done(6)
+        } else {
+            iter.continue()
+        }
+    }
+}
+
+*/
