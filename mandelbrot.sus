@@ -98,16 +98,13 @@ module SlowIterator #(T, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
             retry_loop = true
         }
     }
-    when iter_is_finised.out | LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop) {
-        request_new_data()
-    }
 
     state bool last_reset_was_true
     action reset {
         last_reset_was_true = true
     } else {
         // Send down a one-clock pulse on reset release to get request_new_data started
-        when last_reset_was_true {
+        when last_reset_was_true | iter_is_finised.out | LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop) {
             request_new_data()
         }
         last_reset_was_true = false
@@ -120,7 +117,7 @@ module SlowIterator #(T, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
 
 /// |z| >= 2
 module MandelbrotStep {
-    interface MandelbrotStep : float z_r, float z_i, float c_r, float c_i -> float new_z_r, float new_z_i, bool is_done {
+    action MandelbrotStep : float z_r, float z_i, float c_r, float c_i -> float new_z_r, float new_z_i, bool is_done {
         float z_sq_r = fp_sub(fp_mul(z_r, z_r), fp_mul(z_i, z_i))
         float z_ri = fp_mul(z_r, z_i)
         float z_sq_i = fp_neg(fp_add(z_ri, z_ri))
@@ -173,6 +170,7 @@ module MandelbrotSlowIter {
 
 
 module SlowIterator2 #(InitialT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
+    domain clk
     domain iter_domain
     CrossDomain iter_is_finised
     ActionCrossDomain iter_with_initial_data
@@ -198,16 +196,13 @@ module SlowIterator2 #(InitialT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATEN
 
     domain request_domain
 
-    bool retry_loop = false
+    output bool retry_loop = false
     trigger request_new_data'0 {
         action start'REQUEST_DATA_LATENCY : InitialT initial_data'REQUEST_DATA_LATENCY {
-            iter_with_initial_data.in(initial_data_cross)
+            iter_with_initial_data.in(initial_data)
         } else {
-            //retry_loop = true
+            retry_loop = true
         }
-    }
-    when iter_is_finised.out | LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop) {
-        request_new_data()
     }
 
     state bool last_reset_was_true
@@ -215,7 +210,7 @@ module SlowIterator2 #(InitialT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATEN
         last_reset_was_true = true
     } else {
         // Send down a one-clock pulse on reset release to get request_new_data started
-        when last_reset_was_true {
+        when last_reset_was_true | iter_is_finised.out | LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop) {
             request_new_data()
         }
         last_reset_was_true = false
@@ -228,6 +223,7 @@ module SlowIteratorState #(T, int MAX_LATENCY, int LATENCY) {
     assert #(C: LATENCY >= 0)
 
     state T iter_state
+    T iter_stack_backwards = LatencyOffset #(OFFSET: -LATENCY)(iter_state)
 
     action link'0 : int#(FROM: 0, TO: MAX_LATENCY) _sentinel'0 {
         output T old'0
@@ -236,19 +232,19 @@ module SlowIteratorState #(T, int MAX_LATENCY, int LATENCY) {
         action init'0 : T initial_data'0 {
             old = initial_data
         } else {
-            old = iter_state
+            old = iter_stack_backwards
         }
 
-        iter_state = LatencyOffset #(OFFSET: -LATENCY)(new)
+        iter_state = new
     }
 }
 
-/*module MandelbrotSlowIter2 {
+module MandelbrotSlowIter2 {
     gen int MAX_ITERATION = 1000
 
-    SlowIterator2 iter
+    SlowIterator2 #(COMPUTATION_LATENCY: 55, REQUEST_DATA_LATENCY: 4) iter
 
-    domain reset
+    domain clk
     action rst {
         iter.reset()
     }
@@ -279,7 +275,6 @@ module SlowIteratorState #(T, int MAX_LATENCY, int LATENCY) {
         c_i.link(sentinel)
         iteration.link(sentinel)
         
-
         when iter.is_initial : float[2] init_data {
             z_r.init(zero)
             z_i.init(zero)
@@ -296,143 +291,10 @@ module SlowIteratorState #(T, int MAX_LATENCY, int LATENCY) {
 
         when is_done {
             done(iteration.old)
-        } else {
-            iter.continue()
-        }
-    }
-}*/
-
-
-module MandelbrotStepFake {
-    interface MandelbrotStepFake : bool z_r'0, bool c_i'3 -> bool is_done'10 {
-        
-    }
-}
-
-module SlowIteratorStateLobo #(T, int LATENCY) {
-    assert #(C: LATENCY >= 0)
-
-    state T iter_state
-
-    output T old'0
-    input T new'LATENCY
-
-    old = iter_state
-
-    iter_state = LatencyOffset #(OFFSET: -LATENCY)(new)
-}
-
-module MandelbrotSlowIter3 {
-    SlowIteratorStateLobo c_i
-    SlowIteratorStateLobo z_r
-    
-    bool should_iter
-    when LatencyOffset#(OFFSET: -30)(should_iter) {
-        c_i.new = c_i.old
-        z_r.new = z_r.old
-
-        should_iter = z_r.old | c_i.old
-    }
-}
-
-
-module SlowIteratorLobotomized #(int COMPUTATION_LATENCY) {
-    domain iter_domain
-    CrossDomain iter_is_finised
-    ActionCrossDomain iter_with_initial_data
-    iter_is_finised.in = false
-
-    bool iter_continue = false
-    trigger iter'0 : int#(FROM: 0, TO: COMPUTATION_LATENCY) iter_sentinel_out'0 {
-        action continue'COMPUTATION_LATENCY {
-            iter_continue = true
-        } else {
-            iter_is_finised.in = true
-        }
-    }
-
-    when LatencyOffset #(OFFSET: -COMPUTATION_LATENCY)(iter_continue) {
-        iter(0)
-    }
-    when iter_with_initial_data.out : bool initial_data_cross {
-        iter(0)
-    }
-
-    domain request_domain
-
-}
-/*
-module MandelbrotSlowIterLobotomized {
-    gen int MAX_ITERATION = 1000
-
-    domain request_domain
-    SlowIteratorLobotomized iter
-
-    domain iter_domain
-    trigger done'0: int iteration_count'0
-
-    SlowIteratorState #(T: type int #(FROM: 0, TO: MAX_ITERATION)) iteration
-    
-    when iter.iter : bool sentinel {
-        iteration.link(20)
-        
-        when iter.is_initial : float[2] init_data {
-            float one = fp_fromfix(1 * pow2#(E: 32))
-            iteration.init(0)
-        }
-
-        reg reg iteration.new = (iteration.old + 1) % MAX_ITERATION
-
-        when iteration.old >= 100 {
-            done(iteration.old)
+        } else when iteration.old == MAX_ITERATION - 1 {
+            done(MAX_ITERATION)
         } else {
             iter.continue()
         }
     }
 }
-
-
-module MandelbrotSlowIterLobotAgain {
-    gen int MAX_ITERATION = 1000
-
-    domain request_domain
-    SlowIterator2 #(COMPUTATION_LATENCY: 60, REQUEST_DATA_LATENCY : 20) iter
-
-    trigger request_new_point'0
-    when iter.request_new_data {
-        request_new_point()
-    }
-
-    action start'4 : float r'4, float i'4 {
-        iter.start([r, i])
-    }
-
-    domain iter_domain
-    trigger done'0: int iteration_count'0
-
-    SlowIteratorState #(T: type float) z_r
-    SlowIteratorState #(T: type float) z_r2
-    
-    when iter.iter : int sentinel {
-        z_r.link(sentinel)
-        z_r2.link(sentinel)
-        
-
-        float one = fp_fromfix(0 * pow2#(E: 32))
-        when iter.is_initial : float[2] init_data {
-            z_r.init(one)
-            z_r2.init(one)
-        }
-
-        z_r.new = fp_add(z_r.old, z_r.old)
-        z_r2.new = fp_add(z_r2.old, z_r2.old)
-
-        when fp_gt(z_r.old, one) {
-            done(6)
-        } else {
-            iter.continue()
-        }
-    }
-}
-
-*/

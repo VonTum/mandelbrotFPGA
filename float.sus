@@ -178,9 +178,7 @@ module fp_neg {
     action fp_neg'0: float a'0 -> float result'0 {
         bool[32] as_bits = transmute_to_bits(a)
         bool[32] inverted
-        for int I in 0..31 {
-            inverted[I] = as_bits[I]
-        }
+        inverted[0:31] = as_bits[0:31]
         inverted[31] = !as_bits[31]
 
         result = transmute_from_bits(inverted)
