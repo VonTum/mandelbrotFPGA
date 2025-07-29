@@ -52,6 +52,21 @@ initial begin
     start <= 0;
     r[31:0] <= 'x;
     i[31:0] <= 'x;
+    wait(request_new_point)
+    @(posedge clk)
+    @(posedge clk)
+    @(posedge clk)
+    @(posedge clk)
+    start <= 1;
+    r[31:0] <= 32'hbf333333; // -0.7
+    i[31:0] <= 32'hbf666666; // -0.9
+    @(posedge clk)
+    start <= 0;
+    r[31:0] <= 'x;
+    i[31:0] <= 'x;
+    wait(request_new_point)
+    #100
+    $finish();
 end
 
 

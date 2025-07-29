@@ -47,32 +47,11 @@ module ActionScopeFix #(T) {
     }
 }
 
-module ActionCrossDomain #(T) {
-    domain a
-
-    CrossDomain valid_cross
-    CrossDomain data_cross
-
-    action in'0 : T din'0 {
-        valid_cross.in = true
-        data_cross.in = din
-    } else {
-        valid_cross.in = false
-    }
-
-    domain b
-    trigger out'0 : T dout'0
-
-    when valid_cross.out {
-        out(data_cross.out)
-    }
-}
-
 module SlowIterator #(T, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
     domain iter_domain
     LatencyOffsetAction #(OFFSET : -COMPUTATION_LATENCY) next_iter_loop
     CrossDomain iter_is_finised
-    ActionCrossDomain iter_with_initial_data
+    CrossAction iter_with_initial_data
     iter_is_finised.in = false
     trigger iter'0 : T data'0 {
         action next_iter'COMPUTATION_LATENCY : T new_data'COMPUTATION_LATENCY {
@@ -167,13 +146,46 @@ module MandelbrotSlowIter {
     }
 }
 
+module tuple2 #(T1, T2) {
+    gen int SIZE1 = sizeof#(T: type T1)
+    gen int SIZE2 = sizeof#(T: type T2)
+    domain clk
 
+    domain pack_dom
+    interface pack : T1 v1_i'0, T2 v2_i'0 -> bool[SIZE1 + SIZE2] packed_o'0
+    packed_o[:SIZE1] = transmute_to_bits(v1_i)
+    packed_o[SIZE1:] = transmute_to_bits(v2_i)
+
+    domain unpack_dom
+    interface unpack : bool[SIZE1 + SIZE2] packed_i'0 -> T1 v1_o'0, T2 v2_o'0
+    v1_o = transmute_from_bits(packed_i[:SIZE1])
+    v2_o = transmute_from_bits(packed_i[SIZE1:])
+}
+
+module tuple3 #(T1, T2, T3) {
+    gen int SIZE1 = sizeof#(T: type T1)
+    gen int SIZE2 = sizeof#(T: type T2)
+    gen int SIZE3 = sizeof#(T: type T3)
+    domain clk
+
+    domain pack_dom
+    interface pack : T1 v1_i'0, T2 v2_i'0, T3 v3_i'0 -> bool[SIZE1 + SIZE2 + SIZE3] packed_o'0
+    packed_o[:SIZE1] = transmute_to_bits(v1_i)
+    packed_o[SIZE1:SIZE1+SIZE2] = transmute_to_bits(v2_i)
+    packed_o[SIZE1+SIZE2:] = transmute_to_bits(v3_i)
+
+    domain unpack_dom
+    interface unpack : bool[SIZE1 + SIZE2] packed_i'0 -> T1 v1_o'0, T2 v2_o'0, T2 v3_o'0
+    v1_o = transmute_from_bits(packed_i[:SIZE1])
+    v2_o = transmute_from_bits(packed_i[SIZE1:SIZE1+SIZE2])
+    v3_o = transmute_from_bits(packed_i[SIZE1+SIZE2:])
+}
 
 module SlowIterator2 #(InitialT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
     domain clk
     domain iter_domain
     CrossDomain iter_is_finised
-    ActionCrossDomain iter_with_initial_data
+    CrossAction iter_with_initial_data
     iter_is_finised.in = false
 
     bool iter_continue = false
