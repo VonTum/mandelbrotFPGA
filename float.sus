@@ -7,6 +7,7 @@ extern module fp_add_ip {
     output float m_axis_result_tdata'11
 }
 
+/// 2 DSPs
 module fp_add {
     fp_add_ip ip
     action fp_add'0: float a'0, float b'0 -> float result'11 {
@@ -26,6 +27,7 @@ extern module fp_sub_ip {
     output float m_axis_result_tdata'11
 }
 
+/// 2 DSPs
 module fp_sub {
     fp_sub_ip ip
     action fp_sub'0: float a'0, float b'0 -> float result'11 {
@@ -45,9 +47,30 @@ extern module fp_mul_ip {
     output float m_axis_result_tdata'8
 }
 
+/// 2 DSPs
 module fp_mul {
     fp_mul_ip ip
     action fp_mul'0: float a'0, float b'0 -> float result'8 {
+        ip.s_axis_a_tvalid(a)
+        ip.s_axis_b_tvalid(b)
+        result = ip.m_axis_result_tdata
+        bool _ = ip.m_axis_result_tvalid
+    }
+}
+
+extern module fp_div_ip {
+    domain aclk
+
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
+    output bool m_axis_result_tvalid'28
+    output float m_axis_result_tdata'28
+}
+
+/// 0 DSPs
+module fp_div {
+    fp_div_ip ip
+    action fp_div'0: float a'0, float b'0 -> float result'28 {
         ip.s_axis_a_tvalid(a)
         ip.s_axis_b_tvalid(b)
         result = ip.m_axis_result_tdata
@@ -67,6 +90,8 @@ extern module fp_fmadd_ip {
 }
 
 /// Computes `(a * b) + c` with 2 DSPs
+/// 
+/// 2 DSPs
 module fp_fmadd {
     fp_fmadd_ip ip
     action fp_fmadd'0: float a'0, float b'0, float c'0 -> float result'16 {
@@ -90,6 +115,8 @@ extern module fp_fmsub_ip {
 }
 
 /// Computes `(a * b) - c` with 2 DSPs
+/// 
+/// 2 DSPs
 module fp_fmsub {
     fp_fmsub_ip ip
     action fp_fmsub'0: float a'0, float b'0, float c'0 -> float result'16 {
@@ -101,6 +128,98 @@ module fp_fmsub {
     }
 }
 
+extern module fp_exp_ip {
+    domain aclk
+
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    output bool m_axis_result_tvalid'29
+    output float m_axis_result_tdata'29
+}
+
+/// 7 DSPs
+module fp_exp {
+    fp_exp_ip ip
+    action fp_exp'0: float a'0 -> float result'29 {
+        ip.s_axis_a_tvalid(a)
+        result = ip.m_axis_result_tdata
+        bool _ = ip.m_axis_result_tvalid
+    }
+}
+
+extern module fp_ln_ip {
+    domain aclk
+
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    output bool m_axis_result_tvalid'28
+    output float m_axis_result_tdata'28
+}
+
+/// 13 DSPs
+module fp_ln {
+    fp_ln_ip ip
+    action fp_ln'0: float a'0 -> float result'28 {
+        ip.s_axis_a_tvalid(a)
+        result = ip.m_axis_result_tdata
+        bool _ = ip.m_axis_result_tvalid
+    }
+}
+
+extern module fp_recip_ip {
+    domain aclk
+
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    output bool m_axis_result_tvalid'29
+    output float m_axis_result_tdata'29
+}
+
+/// 13 DSPs
+module fp_recip {
+    fp_recip_ip ip
+    action fp_recip'0: float a'0 -> float result'29 {
+        ip.s_axis_a_tvalid(a)
+        result = ip.m_axis_result_tdata
+        bool _ = ip.m_axis_result_tvalid
+    }
+}
+
+extern module fp_sqrt_ip {
+    domain aclk
+
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    output bool m_axis_result_tvalid'28
+    output float m_axis_result_tdata'28
+}
+
+/// 0 DSPs
+module fp_sqrt {
+    fp_sqrt_ip ip
+    action fp_sqrt'0: float a'0 -> float result'28 {
+        ip.s_axis_a_tvalid(a)
+        result = ip.m_axis_result_tdata
+        bool _ = ip.m_axis_result_tvalid
+    }
+}
+
+extern module fp_rsqrt_ip {
+    domain aclk
+
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    output bool m_axis_result_tvalid'32
+    output float m_axis_result_tdata'32
+}
+
+/// 9 DSPs
+module fp_rsqrt {
+    fp_rsqrt_ip ip
+    action fp_sqrt'0: float a'0 -> float result'32 {
+        ip.s_axis_a_tvalid(a)
+        result = ip.m_axis_result_tdata
+        bool _ = ip.m_axis_result_tvalid
+    }
+}
+
+
+
 extern module fp_gt_ip {
     domain aclk
 
@@ -110,6 +229,7 @@ extern module fp_gt_ip {
     output bool[8] m_axis_result_tdata'2
 }
 
+/// 0 DSPs
 module fp_gt {
     fp_gt_ip ip
     action fp_gt'0: float a'0, float b'0 -> bool result'2 {
@@ -129,6 +249,7 @@ extern module fp_gteq_ip {
     output bool[8] m_axis_result_tdata'2
 }
 
+/// 0 DSPs
 module fp_gteq {
     fp_gteq_ip ip
     action fp_gteq'0: float a'0, float b'0 -> bool result'2 {
@@ -148,6 +269,7 @@ extern module fp_fromfix_ip {
     output float m_axis_result_tdata'7
 }
 
+/// 0 DSPs
 module fp_fromfix {
     fp_fromfix_ip ip
     action fp_fromfix'0: int#(FROM:0, TO: pow2#(E: 64)) a'0 -> float result'7 {
@@ -166,6 +288,7 @@ extern module fp_tofix_ip {
     output int#(FROM:0, TO: pow2#(E: 64)) m_axis_result_tdata'6
 }
 
+/// 0 DSPs
 module fp_tofix {
     fp_tofix_ip ip
     action fp_tofix'0: float a'0 -> int#(FROM:0, TO: pow2#(E: 64)) result'6 {
@@ -182,6 +305,7 @@ extern module fp_fromint_ip {
     output float m_axis_result_tdata'6
 }
 
+/// 0 DSPs
 module fp_fromint {
     fp_fromint_ip ip
     action fp_fromint'0 : int#(FROM: 0, TO: pow2#(E: 32)) a'0 -> float result'6 {
@@ -198,6 +322,7 @@ extern module fp_toint_ip {
     output int#(FROM: 0, TO: pow2#(E: 32)) m_axis_result_tdata'6
 }
 
+/// 0 DSPs
 module fp_toint {
     fp_toint_ip ip
     action fp_toint'0 : float a'0 -> int#(FROM: 0, TO: pow2#(E: 32)) result'6 {
@@ -207,6 +332,7 @@ module fp_toint {
     }
 }
 
+/// 0 DSPs
 module fp_neg {
     // No IP for negate, so manually mess with the sign bit
     action fp_neg'0: float a'0 -> float result'0 {
@@ -219,6 +345,7 @@ module fp_neg {
     }
 }
 
+/// 0 DSPs
 module fp_abs {
     // Since we've already implemented fp_neg, might as well do abs too
     action fp_abs'0: float a'0 -> float result'0 {
