@@ -1,2 +1,17 @@
-verilog_output/
+
 *.dot
+
+# SUS codegen files
+mandelbrotFPGA.srcs/sources_1/new/sus_codegen.sv
+verilog_output/
+
+# Vivado stuff
+mandelbrotFPGA.cache/
+mandelbrotFPGA.gen/
+mandelbrotFPGA.hw/
+mandelbrotFPGA.ip_user_files/
+mandelbrotFPGA.runs/
+mandelbrotFPGA.sim/
+mandelbrotFPGA.xpr
+*.xci
+*.dcp

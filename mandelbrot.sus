@@ -21,32 +21,6 @@ module staticForLoop #(int TO) {
     }
 }
 
-module LatencyOffsetAction #(T, int OFFSET) {
-    T stored_data
-    bool is_valid
-    
-    action in'0 : T din'0 {
-        is_valid = true
-        stored_data = din
-    } else {
-        is_valid = false
-    }
-
-    trigger out'OFFSET : T dout'OFFSET
-
-    when LatencyOffset #(OFFSET)(is_valid) {
-        out(LatencyOffset #(OFFSET)(stored_data))
-    }
-}
-
-module ActionScopeFix #(T) {
-    trigger out'0 : T dout'0
-
-    action in'0 : T din'0 {
-        out(din)
-    }
-}
-
 module SlowIterator #(T, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
     domain iter_domain
     LatencyOffsetAction #(OFFSET : -COMPUTATION_LATENCY) next_iter_loop
@@ -106,7 +80,7 @@ module MandelbrotStep {
 
         float radius_sq = fp_add(fp_mul(new_z_r, new_z_r), fp_mul(new_z_i, new_z_i))
 
-        float four = fp_fromfix(4 * pow2#(E: 32))
+        float four = fp_fromint(4)
         is_done = fp_gt(radius_sq, four)
     }
 }
@@ -208,13 +182,12 @@ module SlowIterator2 #(InitialT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATEN
 
     domain request_domain
 
-    output bool retry_loop = false
-    trigger request_new_data'0 {
-        action start'REQUEST_DATA_LATENCY : InitialT initial_data'REQUEST_DATA_LATENCY {
-            iter_with_initial_data.in(initial_data)
-        } else {
-            retry_loop = true
-        }
+    bool retry_loop = false
+    output bool may_start'0 = false
+    action start'REQUEST_DATA_LATENCY : InitialT initial_data'REQUEST_DATA_LATENCY {
+        iter_with_initial_data.in(initial_data)
+    } else {
+        retry_loop = true
     }
 
     state bool last_reset_was_true
@@ -223,7 +196,7 @@ module SlowIterator2 #(InitialT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATEN
     } else {
         // Send down a one-clock pulse on reset release to get request_new_data started
         when last_reset_was_true | iter_is_finised.out | LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop) {
-            request_new_data()
+            may_start = true
         }
         last_reset_was_true = false
     }
@@ -261,11 +234,7 @@ module MandelbrotSlowIter2 {
         iter.reset()
     }
 
-    trigger request_new_point'0
-    when iter.request_new_data {
-        request_new_point()
-    }
-
+    output bool may_start'0 = iter.may_start
     action start'4 : float r'4, float i'4 {
         iter.start([r, i])
     }
@@ -279,7 +248,7 @@ module MandelbrotSlowIter2 {
     SlowIteratorState #(T: type float) c_i
     SlowIteratorState #(T: type int #(FROM: 0, TO: MAX_ITERATION)) iteration
     
-    float zero = fp_fromfix(0 * pow2#(E: 32))
+    float zero = fp_fromint(0)
     when iter.iter : int sentinel {
         z_r.link(sentinel)
         z_i.link(sentinel)
@@ -295,8 +264,7 @@ module MandelbrotSlowIter2 {
             iteration.init(0)
         }
 
-        MandelbrotStep step
-        z_r.new, z_i.new, bool is_done = step(z_r.old, z_i.old, c_r.old, c_i.old)
+        z_r.new, z_i.new, bool is_done = MandelbrotStep(z_r.old, z_i.old, c_r.old, c_i.old)
         c_r.new = c_r.old
         c_i.new = c_i.old
         iteration.new = unsafe_int_cast#(FROM: 0, TO: MAX_ITERATION)(iteration.old + 1)
@@ -308,5 +276,46 @@ module MandelbrotSlowIter2 {
         } else {
             iter.continue()
         }
+    }
+}
+
+module ScreenIterator #(int WIDTH, int HEIGHT) {
+    state float origin_x
+    state float origin_y
+    state float step_x
+    state float step_y
+    state int #(FROM: 0, TO: WIDTH) cur_x
+    state int #(FROM: 0, TO: HEIGHT) cur_y
+    
+    action start : float new_origin_x, float new_origin_y, float new_step_x, float new_step_y {
+        origin_x = new_origin_x
+        origin_y = new_origin_y
+        cur_x = 0
+        cur_y = 0
+        step_x = new_step_x
+        step_y = new_step_y
+    }
+
+    bool x_at_end = cur_x == WIDTH - 1
+    bool y_at_end = cur_y == HEIGHT - 1
+
+    output bool last = false
+    
+    output bool may_next = !x_at_end | !y_at_end
+    output bool may_start = !may_next
+    action next : -> float x, float y {
+        when x_at_end {
+            cur_x = -WIDTH / 2
+            when y_at_end {
+                last = true
+            } else {
+                cur_y = cur_y + 1
+            }
+        } else {
+            cur_x = cur_x + 1
+        }
+
+        x = fp_fmadd(step_x, fp_fromfix(cur_x), origin_x)
+        x = fp_fmadd(step_y, fp_fromfix(cur_y), origin_y)
     }
 }

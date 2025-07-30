@@ -1,10 +1,10 @@
 extern module fp_add_ip {
-  domain aclk
+    domain aclk
 
-  action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
-  action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
-  output bool m_axis_result_tvalid'11
-  output float m_axis_result_tdata'11
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
+    output bool m_axis_result_tvalid'11
+    output float m_axis_result_tdata'11
 }
 
 module fp_add {
@@ -18,12 +18,12 @@ module fp_add {
 }
 
 extern module fp_sub_ip {
-  domain aclk
+    domain aclk
 
-  action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
-  action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
-  output bool m_axis_result_tvalid'11
-  output float m_axis_result_tdata'11
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
+    output bool m_axis_result_tvalid'11
+    output float m_axis_result_tdata'11
 }
 
 module fp_sub {
@@ -37,12 +37,12 @@ module fp_sub {
 }
 
 extern module fp_mul_ip {
-  domain aclk
+    domain aclk
 
-  action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
-  action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
-  output bool m_axis_result_tvalid'8
-  output float m_axis_result_tdata'8
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
+    output bool m_axis_result_tvalid'8
+    output float m_axis_result_tdata'8
 }
 
 module fp_mul {
@@ -55,16 +55,18 @@ module fp_mul {
     }
 }
 
+/// Computes `(a * b) + c` with 2 DSPs
 extern module fp_fmadd_ip {
-  domain aclk
+    domain aclk
 
-  action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
-  action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
-  action s_axis_c_tvalid'0: float s_axis_c_tdata'0 {}
-  output bool m_axis_result_tvalid'16
-  output float m_axis_result_tdata'16
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
+    action s_axis_c_tvalid'0: float s_axis_c_tdata'0 {}
+    output bool m_axis_result_tvalid'16
+    output float m_axis_result_tdata'16
 }
 
+/// Computes `(a * b) + c` with 2 DSPs
 module fp_fmadd {
     fp_fmadd_ip ip
     action fp_fmadd'0: float a'0, float b'0, float c'0 -> float result'16 {
@@ -76,15 +78,15 @@ module fp_fmadd {
     }
 }
 
-/// Computes `(a * b) + c` with 2 DSPs
+/// Computes `(a * b) - c` with 2 DSPs
 extern module fp_fmsub_ip {
-  domain aclk
+    domain aclk
 
-  action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
-  action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
-  action s_axis_c_tvalid'0: float s_axis_c_tdata'0 {}
-  output bool m_axis_result_tvalid'16
-  output float m_axis_result_tdata'16
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
+    action s_axis_c_tvalid'0: float s_axis_c_tdata'0 {}
+    output bool m_axis_result_tvalid'16
+    output float m_axis_result_tdata'16
 }
 
 /// Computes `(a * b) - c` with 2 DSPs
@@ -100,12 +102,12 @@ module fp_fmsub {
 }
 
 extern module fp_gt_ip {
-  domain aclk
+    domain aclk
 
-  action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
-  action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
-  output bool m_axis_result_tvalid'2
-  output bool[8] m_axis_result_tdata'2
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
+    output bool m_axis_result_tvalid'2
+    output bool[8] m_axis_result_tdata'2
 }
 
 module fp_gt {
@@ -119,12 +121,12 @@ module fp_gt {
 }
 
 extern module fp_gteq_ip {
-  domain aclk
+    domain aclk
 
-  action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
-  action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
-  output bool m_axis_result_tvalid'2
-  output bool[8] m_axis_result_tdata'2
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    action s_axis_b_tvalid'0: float s_axis_b_tdata'0 {}
+    output bool m_axis_result_tvalid'2
+    output bool[8] m_axis_result_tdata'2
 }
 
 module fp_gteq {
@@ -139,11 +141,11 @@ module fp_gteq {
 
 /// Convert a fix<32, 32> to float. (So to create the integer, multiply by pow2#(E: 32))
 extern module fp_fromfix_ip {
-  domain aclk
+    domain aclk
 
-  action s_axis_a_tvalid'0: int#(FROM:0, TO: pow2#(E: 64)) s_axis_a_tdata'0 {}
-  output bool m_axis_result_tvalid'7
-  output float m_axis_result_tdata'7
+    action s_axis_a_tvalid'0: int#(FROM:0, TO: pow2#(E: 64)) s_axis_a_tdata'0 {}
+    output bool m_axis_result_tvalid'7
+    output float m_axis_result_tdata'7
 }
 
 module fp_fromfix {
@@ -157,16 +159,48 @@ module fp_fromfix {
 
 /// Convert a float fix<32, 32>. (So to create the integer, divide by pow2#(E: 32))
 extern module fp_tofix_ip {
-  domain aclk
+    domain aclk
 
-  action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
-  output bool m_axis_result_tvalid'6
-  output int#(FROM:0, TO: pow2#(E: 64)) m_axis_result_tdata'6
+    action s_axis_a_tvalid'0: float s_axis_a_tdata'0 {}
+    output bool m_axis_result_tvalid'6
+    output int#(FROM:0, TO: pow2#(E: 64)) m_axis_result_tdata'6
 }
 
 module fp_tofix {
     fp_tofix_ip ip
     action fp_tofix'0: float a'0 -> int#(FROM:0, TO: pow2#(E: 64)) result'6 {
+        ip.s_axis_a_tvalid(a)
+        result = ip.m_axis_result_tdata
+        bool _ = ip.m_axis_result_tvalid
+    }
+}
+
+extern module fp_fromint_ip {
+    domain aclk
+    action s_axis_a_tvalid'0 : int#(FROM: 0, TO: pow2#(E: 32)) s_axis_a_tdata'0 {}
+    output bool m_axis_result_tvalid'6
+    output float m_axis_result_tdata'6
+}
+
+module fp_fromint {
+    fp_fromint_ip ip
+    action fp_fromint'0 : int#(FROM: 0, TO: pow2#(E: 32)) a'0 -> float result'6 {
+        ip.s_axis_a_tvalid(a)
+        result = ip.m_axis_result_tdata
+        bool _ = ip.m_axis_result_tvalid
+    }
+}
+
+extern module fp_toint_ip {
+    domain aclk
+    action s_axis_a_tvalid'0 : float s_axis_a_tdata'0 {}
+    output bool m_axis_result_tvalid'6
+    output int#(FROM: 0, TO: pow2#(E: 32)) m_axis_result_tdata'6
+}
+
+module fp_toint {
+    fp_toint_ip ip
+    action fp_toint'0 : float a'0 -> int#(FROM: 0, TO: pow2#(E: 32)) result'6 {
         ip.s_axis_a_tvalid(a)
         result = ip.m_axis_result_tdata
         bool _ = ip.m_axis_result_tvalid
@@ -182,5 +216,17 @@ module fp_neg {
         inverted[31] = !as_bits[31]
 
         result = transmute_from_bits(inverted)
+    }
+}
+
+module fp_abs {
+    // Since we've already implemented fp_neg, might as well do abs too
+    action fp_abs'0: float a'0 -> float result'0 {
+        bool[32] as_bits = transmute_to_bits(a)
+        bool[32] abs
+        abs[0:31] = as_bits[0:31]
+        abs[31] = false
+
+        result = transmute_from_bits(abs)
     }
 }
