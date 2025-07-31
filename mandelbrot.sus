@@ -149,25 +149,24 @@ module tuple3 #(T1, T2, T3) {
     packed_o[SIZE1+SIZE2:] = transmute_to_bits(v3_i)
 
     domain unpack_dom
-    interface unpack : bool[SIZE1 + SIZE2] packed_i'0 -> T1 v1_o'0, T2 v2_o'0, T2 v3_o'0
+    interface unpack : bool[SIZE1 + SIZE2 + SIZE3] packed_i'0 -> T1 v1_o'0, T2 v2_o'0, T3 v3_o'0
     v1_o = transmute_from_bits(packed_i[:SIZE1])
     v2_o = transmute_from_bits(packed_i[SIZE1:SIZE1+SIZE2])
     v3_o = transmute_from_bits(packed_i[SIZE1+SIZE2:])
 }
 
-module SlowIterator2 #(InitialT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
+module SlowIterator2 #(InitialT, ResultT, ExtraDataT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
     domain clk
     domain iter_domain
-    CrossDomain iter_is_finised
+    CrossAction iter_is_finished
     CrossAction iter_with_initial_data
-    iter_is_finised.in = false
 
     bool iter_continue = false
     trigger iter'0 : int #(FROM: 0, TO: COMPUTATION_LATENCY+1) iter_sentinel_out'0 {
-        action continue'COMPUTATION_LATENCY {
-            iter_continue = true
+        action done'COMPUTATION_LATENCY: ResultT result'COMPUTATION_LATENCY {
+            iter_is_finished.in(result)
         } else {
-            iter_is_finised.in = true
+            iter_continue = true
         }
     }
     trigger is_initial'0: InitialT initial_data'0
@@ -181,22 +180,32 @@ module SlowIterator2 #(InitialT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATEN
     }
 
     domain request_domain
-
+    state ExtraDataT extra_data_stored
     bool retry_loop = false
-    output bool may_start'0 = false
-    action start'REQUEST_DATA_LATENCY : InitialT initial_data'REQUEST_DATA_LATENCY {
-        iter_with_initial_data.in(initial_data)
-    } else {
-        retry_loop = true
+
+    trigger may_start'0 {
+        action start'REQUEST_DATA_LATENCY : InitialT initial_data'REQUEST_DATA_LATENCY, ExtraDataT extra_data'REQUEST_DATA_LATENCY {
+            iter_with_initial_data.in(initial_data)
+            extra_data_stored = extra_data
+        } else {
+            retry_loop = true
+        }
     }
 
+    trigger finish : ResultT result_data, ExtraDataT extra_result_data
+
     state bool last_reset_was_true
+    bool retry_loop_done = LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop)
     action reset'0 {
         last_reset_was_true = true
     } else {
         // Send down a one-clock pulse on reset release to get request_new_data started
-        when last_reset_was_true | iter_is_finised.out | LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop) {
-            may_start = true
+        when last_reset_was_true | retry_loop_done {
+            may_start()
+        }
+        when iter_is_finished.out : ResultT result_data {
+            may_start()
+            finish(result_data, extra_data_stored)
         }
         last_reset_was_true = false
     }
@@ -224,23 +233,30 @@ module SlowIteratorState #(T, int MAX_LATENCY, int LATENCY) {
     }
 }
 
-module MandelbrotSlowIter2 {
-    gen int MAX_ITERATION = 1000
+module MandelbrotSlowIter2 #(ExtraDataT, int INPUT_DATA_LATENCY) {
+    gen int MAX_ITERATION = 100
 
-    SlowIterator2 #(COMPUTATION_LATENCY: 55, REQUEST_DATA_LATENCY: 4) iter
+    SlowIterator2 #(COMPUTATION_LATENCY: 55) iter
 
     domain clk
     action rst {
         iter.reset()
     }
 
-    output bool may_start'0 = iter.may_start
-    action start'4 : float r'4, float i'4 {
-        iter.start([r, i])
+    trigger may_start'0
+    when iter.may_start {
+        may_start()
+    }
+    action start'INPUT_DATA_LATENCY : float r'INPUT_DATA_LATENCY, float i'INPUT_DATA_LATENCY, ExtraDataT extra_data'INPUT_DATA_LATENCY {
+        iter.start([r, i], extra_data)
+    }
+
+    trigger finish: int iteration_count, ExtraDataT extra_data
+    when iter.finish: int iteration_count, ExtraDataT extra_data {
+        finish(iteration_count, extra_data)
     }
 
     domain iter_domain
-    trigger done'0: int iteration_count'0
 
     SlowIteratorState #(T: type float) z_r
     SlowIteratorState #(T: type float) z_i
@@ -270,30 +286,22 @@ module MandelbrotSlowIter2 {
         iteration.new = unsafe_int_cast#(FROM: 0, TO: MAX_ITERATION)(iteration.old + 1)
 
         when is_done {
-            done(iteration.old)
+            iter.done(iteration.old)
         } else when iteration.old == MAX_ITERATION - 1 {
-            done(MAX_ITERATION)
-        } else {
-            iter.continue()
+            iter.done(MAX_ITERATION)
         }
     }
 }
 
 module ScreenIterator #(int WIDTH, int HEIGHT) {
-    state float origin_x
-    state float origin_y
-    state float step_x
-    state float step_y
     state int #(FROM: 0, TO: WIDTH) cur_x
     state int #(FROM: 0, TO: HEIGHT) cur_y
+    output state bool may_next
     
-    action start : float new_origin_x, float new_origin_y, float new_step_x, float new_step_y {
-        origin_x = new_origin_x
-        origin_y = new_origin_y
+    action start {
         cur_x = 0
         cur_y = 0
-        step_x = new_step_x
-        step_y = new_step_y
+        may_next = true
     }
 
     bool x_at_end = cur_x == WIDTH - 1
@@ -301,21 +309,83 @@ module ScreenIterator #(int WIDTH, int HEIGHT) {
 
     output bool last = false
     
-    output bool may_next = !x_at_end | !y_at_end
     output bool may_start = !may_next
-    action next : -> float x, float y {
+    action next : -> int #(FROM: 0, TO: WIDTH) x, int #(FROM: 0, TO: HEIGHT) y {
+        x = cur_x
+        y = cur_y
+
         when x_at_end {
-            cur_x = -WIDTH / 2
+            cur_x = 0
             when y_at_end {
                 last = true
             } else {
-                cur_y = cur_y + 1
+                cur_y = unsafe_int_cast#(FROM: 0, TO: HEIGHT) (cur_y + 1)
             }
         } else {
-            cur_x = cur_x + 1
+            cur_x = unsafe_int_cast#(FROM: 0, TO: WIDTH) (cur_x + 1)
         }
 
-        x = fp_fmadd(step_x, fp_fromfix(cur_x), origin_x)
-        x = fp_fmadd(step_y, fp_fromfix(cur_y), origin_y)
+        may_next = !x_at_end | !y_at_end
+    }
+    
+    action rst {
+        cur_x = WIDTH - 1
+        cur_y = HEIGHT - 1
+        may_next = false
+    }
+}
+
+module PixelToComplex #(int WIDTH, int HEIGHT) {
+    action PixelToComplex : 
+        float origin_r,
+        float origin_i,
+        float step,
+        int#(FROM: 0, TO: WIDTH) px_x,
+        int#(FROM: 0, TO: HEIGHT) px_y -> float r, float i {
+        r = fp_fmadd(step, fp_fromint(px_x), origin_r)
+        i = fp_fmadd(step, fp_fromint(px_y), origin_i)
+    }
+}
+
+module WholeMandelbrotComputer {
+    gen int WIDTH = 16
+    gen int HEIGHT = 12
+    
+    ScreenIterator #(WIDTH, HEIGHT) pixel_producer
+    MandelbrotSlowIter2 mandel_iter
+    
+    action rst {
+        pixel_producer.rst()
+        mandel_iter.rst()
+    }
+
+    state float origin_r_st
+    state float origin_i_st
+    state float scale_st
+
+    output bool may_start = pixel_producer.may_start
+    action start : float origin_r, float origin_i, float scale {
+        origin_r_st = origin_r
+        origin_i_st = origin_i
+        scale_st = scale
+
+        pixel_producer.start()
+    }
+
+    tuple3 mandel_iter_extra_data
+    when pixel_producer.may_next {
+        when mandel_iter.may_start {
+            int x, int y = pixel_producer.next()
+
+            float r, float i = PixelToComplex(origin_r_st, origin_i_st, scale_st, x, y)
+
+            mandel_iter.start(r, i, mandel_iter_extra_data.pack(x, y, pixel_producer.last))
+        }
+    }
+
+    trigger px_out'0 : int iter_count'0, int x'0, int y'0, bool last'0
+    when mandel_iter.finish : int iter_count, bool[9] extra_data {
+        int px_x, int px_y, bool last = mandel_iter_extra_data.unpack(extra_data)
+        px_out(iter_count, px_x, px_y, last)
     }
 }

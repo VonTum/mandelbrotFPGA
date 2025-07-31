@@ -86,3 +86,66 @@ MandelbrotSlowIter2 mandel(
 );
 
 endmodule
+
+module SimWholeMandelbrot();
+
+logic clk = 1;
+logic rst;
+
+always #5 clk = ~clk;
+
+logic start;
+logic may_start;
+
+logic[31:0] origin_r = 32'h3f333333; // 0.7
+logic[31:0] origin_i = 32'h3f666666; // 0.9
+logic[31:0] scale = 32'h3dcccccd; // 0.1
+
+logic px_out;
+logic[3:0] x_2;
+logic[3:0] y_2;
+logic[9:0] iter_count;
+logic last;
+
+logic[9:0] screen[16][12];
+
+WholeMandelbrotComputer comp(
+	.clk(clk),
+	.rst(rst),
+	.may_start(may_start),
+	.start(start),
+	.origin_r(origin_r),
+	.origin_i(origin_i),
+	.scale(scale),
+    .px_out(px_out),
+    .x_2(x_2),
+    .y_2(y_2),
+    .iter_count(iter_count),
+    .last(last)
+);
+
+always @(posedge clk) begin
+    if(px_out) begin
+        screen[x_2][y_2] = iter_count;
+    end
+end
+
+initial begin
+    #20
+    rst <= 1;
+    start <= 0;
+    #801
+    @(posedge clk)
+    rst <= 0;
+    #100
+    wait(may_start)
+    @(posedge clk)
+    @(posedge clk)
+    @(posedge clk)
+    @(posedge clk)
+    start <= 1;
+    @(posedge clk)
+    start <= 0;
+end
+
+endmodule

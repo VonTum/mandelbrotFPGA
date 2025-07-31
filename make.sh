@@ -6,5 +6,5 @@
     --debug-whitelist SlowIterator2\
     --debug-whitelist SlowIteratorState\
     --debug-whitelist ActionCrossDomain\
-    --standalone MandelbrotSlowIter2\
+    --standalone WholeMandelbrotComputer\
     --standalone-file mandelbrotFPGA.srcs/sources_1/new/sus_codegen.sv
