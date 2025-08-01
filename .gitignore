@@ -2,7 +2,6 @@
 *.dot
 
 # SUS codegen files
-mandelbrotFPGA.srcs/sources_1/new/sus_codegen.sv
 verilog_output/
 
 # Vivado stuff
