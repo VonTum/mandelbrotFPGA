@@ -300,7 +300,7 @@ module fp_tofix {
 
 extern module fp_fromint_ip {
     domain aclk
-    action s_axis_a_tvalid'0 : int#(FROM: 0, TO: pow2#(E: 32)) s_axis_a_tdata'0 {}
+    action s_axis_a_tvalid'0 : int#(FROM: -pow2#(E: 31), TO: pow2#(E: 31)) s_axis_a_tdata'0 {}
     output bool m_axis_result_tvalid'6
     output float m_axis_result_tdata'6
 }
@@ -308,7 +308,7 @@ extern module fp_fromint_ip {
 /// 0 DSPs
 module fp_fromint {
     fp_fromint_ip ip
-    action fp_fromint'0 : int#(FROM: 0, TO: pow2#(E: 32)) a'0 -> float result'6 {
+    action fp_fromint'0 : int#(FROM: -pow2#(E: 31), TO: pow2#(E: 31)) a'0 -> float result'6 {
         ip.s_axis_a_tvalid(a)
         result = ip.m_axis_result_tdata
         bool _ = ip.m_axis_result_tvalid
@@ -319,13 +319,13 @@ extern module fp_toint_ip {
     domain aclk
     action s_axis_a_tvalid'0 : float s_axis_a_tdata'0 {}
     output bool m_axis_result_tvalid'6
-    output int#(FROM: 0, TO: pow2#(E: 32)) m_axis_result_tdata'6
+    output int#(FROM: -pow2#(E: 31), TO: pow2#(E: 31)) m_axis_result_tdata'6
 }
 
 /// 0 DSPs
 module fp_toint {
     fp_toint_ip ip
-    action fp_toint'0 : float a'0 -> int#(FROM: 0, TO: pow2#(E: 32)) result'6 {
+    action fp_toint'0 : float a'0 -> int#(FROM: -pow2#(E: 31), TO: pow2#(E: 31)) result'6 {
         ip.s_axis_a_tvalid(a)
         result = ip.m_axis_result_tdata
         bool _ = ip.m_axis_result_tvalid

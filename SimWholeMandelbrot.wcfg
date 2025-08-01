@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="SimWholeMandelbrot_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="SimWholeMandelbrot" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="29,815,593.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="29,817,724.001 ns"></ZoomEndTime>
+      <Cursor1Time time="29,817,000.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="365"></NameColumnWidth>
+      <ValueColumnWidth column_width="101"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="14" />
+   <wvobject type="logic" fp_name="/SimWholeMandelbrot/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/SimWholeMandelbrot/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/SimWholeMandelbrot/start">
+      <obj_property name="ElementShortName">start</obj_property>
+      <obj_property name="ObjectShortName">start</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/SimWholeMandelbrot/may_start">
+      <obj_property name="ElementShortName">may_start</obj_property>
+      <obj_property name="ObjectShortName">may_start</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/SimWholeMandelbrot/origin_r">
+      <obj_property name="ElementShortName">origin_r[31:0]</obj_property>
+      <obj_property name="ObjectShortName">origin_r[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/SimWholeMandelbrot/origin_i">
+      <obj_property name="ElementShortName">origin_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">origin_i[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/SimWholeMandelbrot/scale">
+      <obj_property name="ElementShortName">scale[31:0]</obj_property>
+      <obj_property name="ObjectShortName">scale[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/SimWholeMandelbrot/px_out">
+      <obj_property name="ElementShortName">px_out</obj_property>
+      <obj_property name="ObjectShortName">px_out</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/SimWholeMandelbrot/x_2">
+      <obj_property name="ElementShortName">x_2[5:0]</obj_property>
+      <obj_property name="ObjectShortName">x_2[5:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/SimWholeMandelbrot/y_2">
+      <obj_property name="ElementShortName">y_2[5:0]</obj_property>
+      <obj_property name="ObjectShortName">y_2[5:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/SimWholeMandelbrot/iter_count">
+      <obj_property name="ElementShortName">iter_count[6:0]</obj_property>
+      <obj_property name="ObjectShortName">iter_count[6:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/SimWholeMandelbrot/last">
+      <obj_property name="ElementShortName">last</obj_property>
+      <obj_property name="ObjectShortName">last</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/SimWholeMandelbrot/screen">
+      <obj_property name="ElementShortName">screen[0:63][0:63][6:0]</obj_property>
+      <obj_property name="ObjectShortName">screen[0:63][0:63][6:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[0]">
+         <obj_property name="ElementShortName">[0][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[1]">
+         <obj_property name="ElementShortName">[1][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[2]">
+         <obj_property name="ElementShortName">[2][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[3]">
+         <obj_property name="ElementShortName">[3][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[4]">
+         <obj_property name="ElementShortName">[4][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[5]">
+         <obj_property name="ElementShortName">[5][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[6]">
+         <obj_property name="ElementShortName">[6][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[7]">
+         <obj_property name="ElementShortName">[7][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[8]">
+         <obj_property name="ElementShortName">[8][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[9]">
+         <obj_property name="ElementShortName">[9][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[10]">
+         <obj_property name="ElementShortName">[10][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[11]">
+         <obj_property name="ElementShortName">[11][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[12]">
+         <obj_property name="ElementShortName">[12][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[13]">
+         <obj_property name="ElementShortName">[13][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[14]">
+         <obj_property name="ElementShortName">[14][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[15]">
+         <obj_property name="ElementShortName">[15][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[16]">
+         <obj_property name="ElementShortName">[16][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[16][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[17]">
+         <obj_property name="ElementShortName">[17][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[17][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[18]">
+         <obj_property name="ElementShortName">[18][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[18][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[19]">
+         <obj_property name="ElementShortName">[19][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[19][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[20]">
+         <obj_property name="ElementShortName">[20][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[20][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[21]">
+         <obj_property name="ElementShortName">[21][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[21][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[22]">
+         <obj_property name="ElementShortName">[22][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[22][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[23]">
+         <obj_property name="ElementShortName">[23][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[23][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[24]">
+         <obj_property name="ElementShortName">[24][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[24][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[25]">
+         <obj_property name="ElementShortName">[25][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[25][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[26]">
+         <obj_property name="ElementShortName">[26][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[26][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[27]">
+         <obj_property name="ElementShortName">[27][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[27][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[28]">
+         <obj_property name="ElementShortName">[28][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[28][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[29]">
+         <obj_property name="ElementShortName">[29][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[29][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[30]">
+         <obj_property name="ElementShortName">[30][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[30][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[31]">
+         <obj_property name="ElementShortName">[31][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[31][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[32]">
+         <obj_property name="ElementShortName">[32][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[32][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[33]">
+         <obj_property name="ElementShortName">[33][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[33][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[34]">
+         <obj_property name="ElementShortName">[34][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[34][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[35]">
+         <obj_property name="ElementShortName">[35][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[35][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[36]">
+         <obj_property name="ElementShortName">[36][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[36][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[37]">
+         <obj_property name="ElementShortName">[37][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[37][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[38]">
+         <obj_property name="ElementShortName">[38][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[38][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[39]">
+         <obj_property name="ElementShortName">[39][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[39][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[40]">
+         <obj_property name="ElementShortName">[40][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[40][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[41]">
+         <obj_property name="ElementShortName">[41][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[41][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[42]">
+         <obj_property name="ElementShortName">[42][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[42][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[43]">
+         <obj_property name="ElementShortName">[43][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[43][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[44]">
+         <obj_property name="ElementShortName">[44][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[44][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[45]">
+         <obj_property name="ElementShortName">[45][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[45][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[46]">
+         <obj_property name="ElementShortName">[46][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[46][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[47]">
+         <obj_property name="ElementShortName">[47][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[47][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[48]">
+         <obj_property name="ElementShortName">[48][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[48][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[49]">
+         <obj_property name="ElementShortName">[49][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[49][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[50]">
+         <obj_property name="ElementShortName">[50][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[50][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[51]">
+         <obj_property name="ElementShortName">[51][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[51][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[52]">
+         <obj_property name="ElementShortName">[52][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[52][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[53]">
+         <obj_property name="ElementShortName">[53][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[53][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[54]">
+         <obj_property name="ElementShortName">[54][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[54][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[55]">
+         <obj_property name="ElementShortName">[55][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[55][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[56]">
+         <obj_property name="ElementShortName">[56][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[56][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[57]">
+         <obj_property name="ElementShortName">[57][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[57][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[58]">
+         <obj_property name="ElementShortName">[58][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[58][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[59]">
+         <obj_property name="ElementShortName">[59][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[59][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[60]">
+         <obj_property name="ElementShortName">[60][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[60][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[61]">
+         <obj_property name="ElementShortName">[61][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[61][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[62]">
+         <obj_property name="ElementShortName">[62][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[62][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screen[63]">
+         <obj_property name="ElementShortName">[63][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[63][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways">
+      <obj_property name="ElementShortName">screenSideways[0:63][0:63][6:0]</obj_property>
+      <obj_property name="ObjectShortName">screenSideways[0:63][0:63][6:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[0]">
+         <obj_property name="ElementShortName">[0][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[1]">
+         <obj_property name="ElementShortName">[1][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[2]">
+         <obj_property name="ElementShortName">[2][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[3]">
+         <obj_property name="ElementShortName">[3][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[4]">
+         <obj_property name="ElementShortName">[4][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[5]">
+         <obj_property name="ElementShortName">[5][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[6]">
+         <obj_property name="ElementShortName">[6][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[7]">
+         <obj_property name="ElementShortName">[7][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[8]">
+         <obj_property name="ElementShortName">[8][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[9]">
+         <obj_property name="ElementShortName">[9][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[10]">
+         <obj_property name="ElementShortName">[10][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[11]">
+         <obj_property name="ElementShortName">[11][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[12]">
+         <obj_property name="ElementShortName">[12][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[13]">
+         <obj_property name="ElementShortName">[13][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[14]">
+         <obj_property name="ElementShortName">[14][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[15]">
+         <obj_property name="ElementShortName">[15][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[16]">
+         <obj_property name="ElementShortName">[16][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[16][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[17]">
+         <obj_property name="ElementShortName">[17][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[17][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[18]">
+         <obj_property name="ElementShortName">[18][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[18][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[19]">
+         <obj_property name="ElementShortName">[19][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[19][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[20]">
+         <obj_property name="ElementShortName">[20][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[20][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[21]">
+         <obj_property name="ElementShortName">[21][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[21][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[22]">
+         <obj_property name="ElementShortName">[22][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[22][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[23]">
+         <obj_property name="ElementShortName">[23][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[23][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[24]">
+         <obj_property name="ElementShortName">[24][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[24][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[25]">
+         <obj_property name="ElementShortName">[25][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[25][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[26]">
+         <obj_property name="ElementShortName">[26][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[26][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[27]">
+         <obj_property name="ElementShortName">[27][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[27][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[28]">
+         <obj_property name="ElementShortName">[28][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[28][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[29]">
+         <obj_property name="ElementShortName">[29][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[29][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[30]">
+         <obj_property name="ElementShortName">[30][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[30][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[31]">
+         <obj_property name="ElementShortName">[31][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[31][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[32]">
+         <obj_property name="ElementShortName">[32][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[32][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[33]">
+         <obj_property name="ElementShortName">[33][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[33][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[34]">
+         <obj_property name="ElementShortName">[34][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[34][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[35]">
+         <obj_property name="ElementShortName">[35][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[35][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[36]">
+         <obj_property name="ElementShortName">[36][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[36][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[37]">
+         <obj_property name="ElementShortName">[37][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[37][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[38]">
+         <obj_property name="ElementShortName">[38][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[38][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[39]">
+         <obj_property name="ElementShortName">[39][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[39][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[40]">
+         <obj_property name="ElementShortName">[40][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[40][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[41]">
+         <obj_property name="ElementShortName">[41][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[41][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[42]">
+         <obj_property name="ElementShortName">[42][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[42][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[43]">
+         <obj_property name="ElementShortName">[43][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[43][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[44]">
+         <obj_property name="ElementShortName">[44][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[44][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[45]">
+         <obj_property name="ElementShortName">[45][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[45][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[46]">
+         <obj_property name="ElementShortName">[46][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[46][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[47]">
+         <obj_property name="ElementShortName">[47][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[47][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[48]">
+         <obj_property name="ElementShortName">[48][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[48][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[49]">
+         <obj_property name="ElementShortName">[49][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[49][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[50]">
+         <obj_property name="ElementShortName">[50][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[50][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[51]">
+         <obj_property name="ElementShortName">[51][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[51][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[52]">
+         <obj_property name="ElementShortName">[52][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[52][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[53]">
+         <obj_property name="ElementShortName">[53][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[53][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[54]">
+         <obj_property name="ElementShortName">[54][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[54][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[55]">
+         <obj_property name="ElementShortName">[55][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[55][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[56]">
+         <obj_property name="ElementShortName">[56][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[56][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[57]">
+         <obj_property name="ElementShortName">[57][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[57][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[58]">
+         <obj_property name="ElementShortName">[58][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[58][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[59]">
+         <obj_property name="ElementShortName">[59][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[59][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[60]">
+         <obj_property name="ElementShortName">[60][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[60][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[61]">
+         <obj_property name="ElementShortName">[61][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[61][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[62]">
+         <obj_property name="ElementShortName">[62][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[62][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/SimWholeMandelbrot/screenSideways[63]">
+         <obj_property name="ElementShortName">[63][0:63][6:0]</obj_property>
+         <obj_property name="ObjectShortName">[63][0:63][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>

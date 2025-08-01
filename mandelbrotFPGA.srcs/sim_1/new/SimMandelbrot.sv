@@ -94,29 +94,28 @@ logic rst;
 
 always #5 clk = ~clk;
 
-logic start;
 logic may_start;
 
-logic[31:0] origin_r = 32'h3f333333; // 0.7
-logic[31:0] origin_i = 32'h3f666666; // 0.9
-logic[31:0] scale = 32'h3dcccccd; // 0.1
-
 logic px_out;
-logic[3:0] x_2;
-logic[3:0] y_2;
-logic[9:0] iter_count;
+logic[5:0] x_2;
+logic[5:0] y_2;
+logic[6:0] iter_count;
 logic last;
 
-logic[9:0] screen[16][12];
+logic[6:0] screen[64][64];
+logic[6:0] screenSideways[64][64];
+
+logic set_reg;
+logic[1:0] id;
+logic[31:0] value;
 
 WholeMandelbrotComputer comp(
 	.clk(clk),
 	.rst(rst),
 	.may_start(may_start),
-	.start(start),
-	.origin_r(origin_r),
-	.origin_i(origin_i),
-	.scale(scale),
+	.set_reg(set_reg),
+	.id(id),
+	.value(value),
     .px_out(px_out),
     .x_2(x_2),
     .y_2(y_2),
@@ -127,13 +126,19 @@ WholeMandelbrotComputer comp(
 always @(posedge clk) begin
     if(px_out) begin
         screen[x_2][y_2] = iter_count;
+        screenSideways[y_2][x_2] = iter_count;
     end
 end
+
+`define START_REG 0
+`define ORIGIN_R_REG 1
+`define ORIGIN_I_REG 2
+`define SCALE_REG 3
 
 initial begin
     #20
     rst <= 1;
-    start <= 0;
+    set_reg <= 0;
     #801
     @(posedge clk)
     rst <= 0;
@@ -143,9 +148,23 @@ initial begin
     @(posedge clk)
     @(posedge clk)
     @(posedge clk)
-    start <= 1;
+    set_reg <= 1;
+    id <= `ORIGIN_R_REG;
+    value <= 32'h0; // 0.0
     @(posedge clk)
-    start <= 0;
+    set_reg <= 1;
+    id <= `ORIGIN_I_REG;
+    value <= 32'h0; // 0.0
+    @(posedge clk)
+    set_reg <= 1;
+    id <= `SCALE_REG;
+    value <= 32'h3d800000; // 0.0625
+    @(posedge clk)
+    set_reg <= 1;
+    id <= `START_REG;
+    value <= 'x; // 0.0625
+    @(posedge clk)
+    set_reg <= 0;
 end
 
 endmodule

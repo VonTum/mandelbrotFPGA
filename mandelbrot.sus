@@ -73,7 +73,7 @@ module MandelbrotStep {
     action MandelbrotStep : float z_r, float z_i, float c_r, float c_i -> float new_z_r, float new_z_i, bool is_done {
         float z_sq_r = fp_sub(fp_mul(z_r, z_r), fp_mul(z_i, z_i))
         float z_ri = fp_mul(z_r, z_i)
-        float z_sq_i = fp_neg(fp_add(z_ri, z_ri))
+        float z_sq_i = fp_add(z_ri, z_ri)
 
         new_z_r = fp_add(z_sq_r, c_r)
         new_z_i = fp_add(z_sq_i, c_i)
@@ -342,14 +342,14 @@ module PixelToComplex #(int WIDTH, int HEIGHT) {
         float step,
         int#(FROM: 0, TO: WIDTH) px_x,
         int#(FROM: 0, TO: HEIGHT) px_y -> float r, float i {
-        r = fp_fmadd(step, fp_fromint(px_x), origin_r)
-        i = fp_fmadd(step, fp_fromint(px_y), origin_i)
+        r = fp_fmadd(step, fp_fromint(px_x - WIDTH / 2), origin_r)
+        i = fp_fmadd(step, fp_fromint(px_y - HEIGHT / 2), origin_i)
     }
 }
 
 module WholeMandelbrotComputer {
-    gen int WIDTH = 16
-    gen int HEIGHT = 12
+    gen int WIDTH = 64
+    gen int HEIGHT = 64
     
     ScreenIterator #(WIDTH, HEIGHT) pixel_producer
     MandelbrotSlowIter2 mandel_iter
@@ -364,12 +364,16 @@ module WholeMandelbrotComputer {
     state float scale_st
 
     output bool may_start = pixel_producer.may_start
-    action start : float origin_r, float origin_i, float scale {
-        origin_r_st = origin_r
-        origin_i_st = origin_i
-        scale_st = scale
-
-        pixel_producer.start()
+    action set_reg : int#(FROM:0, TO: 4) id, float value {
+        when id == 0 {
+            pixel_producer.start()
+        } else when id == 1 {
+            origin_r_st = value
+        } else when id == 2 {
+            origin_i_st = value
+        } else when id == 3 {
+            scale_st = value
+        }
     }
 
     tuple3 mandel_iter_extra_data
@@ -384,7 +388,7 @@ module WholeMandelbrotComputer {
     }
 
     trigger px_out'0 : int iter_count'0, int x'0, int y'0, bool last'0
-    when mandel_iter.finish : int iter_count, bool[9] extra_data {
+    when mandel_iter.finish : int iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT) + 1] extra_data {
         int px_x, int px_y, bool last = mandel_iter_extra_data.unpack(extra_data)
         px_out(iter_count, px_x, px_y, last)
     }
