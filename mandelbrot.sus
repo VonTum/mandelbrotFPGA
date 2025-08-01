@@ -309,8 +309,8 @@ module ScreenIterator #(int WIDTH, int HEIGHT) {
 
     output bool last = false
     
-    output bool may_start = !may_next
-    action next : -> int #(FROM: 0, TO: WIDTH) x, int #(FROM: 0, TO: HEIGHT) y {
+    output bool may_start'0 = !may_next
+    action next'0 : -> int #(FROM: 0, TO: WIDTH) x'0, int #(FROM: 0, TO: HEIGHT) y'0 {
         x = cur_x
         y = cur_y
 
@@ -353,31 +353,36 @@ module WholeMandelbrotComputer {
     
     ScreenIterator #(WIDTH, HEIGHT) pixel_producer
     MandelbrotSlowIter2 mandel_iter
+    FIFO #(DEPTH: 64, MAY_PUSH_LATENCY: 10) outputFIFO
     
     action rst {
         pixel_producer.rst()
         mandel_iter.rst()
+        outputFIFO.rst()
     }
 
     state float origin_r_st
     state float origin_i_st
     state float scale_st
-
-    output bool may_start = pixel_producer.may_start
-    action set_reg : int#(FROM:0, TO: 4) id, float value {
+    
+    bool may_startt = pixel_producer.may_start
+    output bool may_start = may_startt
+    action set_reg'6 : int#(FROM:0, TO: 5) id'6, float value'6 {
         when id == 0 {
             pixel_producer.start()
-        } else when id == 1 {
-            origin_r_st = value
         } else when id == 2 {
-            origin_i_st = value
+            origin_r_st = value
         } else when id == 3 {
+            origin_i_st = value
+        } else when id == 4 {
             scale_st = value
         }
     }
 
+    CrossDomain mayPush
+    mayPush.in = outputFIFO.may_push
     tuple3 mandel_iter_extra_data
-    when pixel_producer.may_next {
+    when pixel_producer.may_next & mayPush.out {
         when mandel_iter.may_start {
             int x, int y = pixel_producer.next()
 
@@ -387,9 +392,19 @@ module WholeMandelbrotComputer {
         }
     }
 
-    trigger px_out'0 : int iter_count'0, int x'0, int y'0, bool last'0
+    tuple2 data
+    trigger may_read_px'0 {
+        action read_px'0 : -> int iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr, bool done'0 {
+            iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT) + 1] extra_data = data.unpack(outputFIFO.pop())
+            int x, int y, done = mandel_iter_extra_data.unpack(extra_data)
+            addr = y * WIDTH + x
+        }
+    }
+    when outputFIFO.may_pop {
+        may_read_px()
+    }
+
     when mandel_iter.finish : int iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT) + 1] extra_data {
-        int px_x, int px_y, bool last = mandel_iter_extra_data.unpack(extra_data)
-        px_out(iter_count, px_x, px_y, last)
+        outputFIFO.push(data.pack(iter_count, extra_data))
     }
 }

@@ -106,7 +106,7 @@ logic[6:0] screen[64][64];
 logic[6:0] screenSideways[64][64];
 
 logic set_reg;
-logic[1:0] id;
+logic[2:0] id;
 logic[31:0] value;
 
 WholeMandelbrotComputer comp(
@@ -131,9 +131,9 @@ always @(posedge clk) begin
 end
 
 `define START_REG 0
-`define ORIGIN_R_REG 1
-`define ORIGIN_I_REG 2
-`define SCALE_REG 3
+`define ORIGIN_R_REG 2
+`define ORIGIN_I_REG 3
+`define SCALE_REG 4
 
 initial begin
     #20
@@ -168,3 +168,103 @@ initial begin
 end
 
 endmodule
+
+
+
+
+module SimWholeMandelbrotWithFIFO();
+
+logic clk = 1;
+logic rst = 0;
+
+always #5 clk = ~clk;
+
+logic may_start;
+
+logic[31:0] addr;
+logic[6:0] iter_count;
+logic done;
+
+logic[6:0] screen[64 * 64];
+
+logic set_reg;
+logic[2:0] id;
+logic[31:0] value;
+
+logic may_read_px;
+logic[6:0] iter_count;
+logic[31:0] addr;
+logic done;
+
+logic try_read;
+wire read_px = try_read && may_read_px;
+
+always begin
+    #100
+    @(posedge clk)
+    try_read <= 1;
+    #100
+    @(posedge clk)
+    try_read <= 0;
+    #1000;
+end
+
+WholeMandelbrotComputer comp(
+	.clk(clk),
+	.rst(rst),
+	.may_start(may_start),
+	.set_reg(set_reg),
+	.id(id),
+	.value(value),
+    .may_read_px(may_read_px),
+    .read_px(read_px),
+    .addr(addr),
+    .iter_count(iter_count),
+    .done(done)
+);
+
+always @(posedge clk) begin
+    if(read_px) begin
+        screen[addr] <= iter_count;
+    end
+end
+
+`define START_REG 0
+`define ORIGIN_R_REG 2
+`define ORIGIN_I_REG 3
+`define SCALE_REG 4
+
+initial begin
+    #20
+    rst <= 1;
+    set_reg <= 0;
+    #801
+    @(posedge clk)
+    rst <= 0;
+    #100
+    wait(may_start)
+    @(posedge clk)
+    @(posedge clk)
+    @(posedge clk)
+    @(posedge clk)
+    set_reg <= 1;
+    id <= `ORIGIN_R_REG;
+    value <= 32'h0; // 0.0
+    @(posedge clk)
+    set_reg <= 1;
+    id <= `ORIGIN_I_REG;
+    value <= 32'h0; // 0.0
+    @(posedge clk)
+    set_reg <= 1;
+    id <= `SCALE_REG;
+    value <= 32'h3d800000; // 0.0625
+    @(posedge clk)
+    set_reg <= 1;
+    id <= `START_REG;
+    value <= 'x; // 0.0625
+    @(posedge clk)
+    set_reg <= 0;
+end
+
+endmodule
+
