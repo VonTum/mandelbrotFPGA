@@ -1,5 +1,5 @@
 /home/lennart/Desktop/sus-compiler/target/release/sus_compiler\
-    mandelbrot.sus float.sus /home/lennart/Desktop/sus-compiler/platform/xilinx/xpm.sus\
+    mandelbrot.sus float.sus xpm.sus\
     --debug print-abstract-pre-typecheck\
     --debug print-abstract\
     --debug print-concrete\
