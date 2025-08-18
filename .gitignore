@@ -11,6 +11,9 @@ mandelbrotFPGA.hw/
 mandelbrotFPGA.ip_user_files/
 mandelbrotFPGA.runs/
 mandelbrotFPGA.sim/
-mandelbrotFPGA.xpr
+mandelbrotFPGA.xpr/
+ip_out/
 *.xci
 *.dcp
+mandelbrotFPGA_dump.txt
+mandelbrotFPGA_def_val.txt

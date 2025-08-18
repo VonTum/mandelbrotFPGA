@@ -3,8 +3,8 @@ use std::collections::HashMap;
 
 use tapasco::{device::Device, job::Job, tlkm::*};
 
-const WIDTH: usize = 64;
-const HEIGHT: usize = 64;
+const WIDTH: usize = 1024;
+const HEIGHT: usize = 1024;
 
 fn mandelbrot_on_fpga(pe: &mut Job, device: &Device, cr: f32, ci: f32, step: f32) -> Vec<u32> {
     pe.start(vec![
@@ -73,10 +73,12 @@ fn print_buf(buf: &[u32]) {
 fn main() {
     const CR : f32 = 0.0;
     const CI : f32 = 0.0;
-    const STEP : f32 = 0.0625;
+    const STEP : f32 = 4.0 / WIDTH as f32;
     println!("Expected:");
     let cpu_buf = mandelbrot_on_cpu(CR, CI, STEP);
     print_buf(&cpu_buf);
+    let total_iters : u32 = cpu_buf.iter().sum();
+    println!("Total iterations needed: {total_iters}");
 
     let tlkm = TLKM::new().unwrap();
     println!("TLKM version is {}", tlkm.version().unwrap());
