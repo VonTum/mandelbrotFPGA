@@ -281,7 +281,7 @@ module SlowIteratorState #(T, int MAX_LATENCY, int LATENCY) {
 module MandelbrotSlowIter2 #(ExtraDataT, int INPUT_DATA_LATENCY) {
     gen int MAX_ITERATION = 100
 
-    SlowIterator2 #(COMPUTATION_LATENCY: 55, REQUEST_DATA_LATENCY: 22) iter
+    SlowIterator2 iter
 
     domain clk
     action rst'0 {
@@ -335,6 +335,7 @@ module MandelbrotSlowIter2 #(ExtraDataT, int INPUT_DATA_LATENCY) {
         }
     }
 }
+
 
 module ScreenIterator #(int WIDTH, int HEIGHT) {
     state int #(FROM: 0, TO: WIDTH) cur_x
@@ -391,8 +392,8 @@ module PixelToComplex #(int WIDTH, int HEIGHT) {
 }
 
 module WholeMandelbrotComputer {
-    gen int WIDTH = 64
-    gen int HEIGHT = 64
+    gen int WIDTH = 1024
+    gen int HEIGHT = 1024
     
     ScreenIterator #(WIDTH, HEIGHT) pixel_producer
     SameCycleReadFIFO #(DEPTH: 64, EXTRA_IN_FLIGHT: 2) outputFIFO
@@ -435,7 +436,7 @@ module WholeMandelbrotComputer {
 
     tuple2 data
     trigger may_read_px'0 {
-        action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:16)) iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr, bool done'0 {
+        action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:32)) iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr, bool done'0 {
             iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT) + 1] extra_data = data.unpack(outputFIFO.pop())
             int x, int y, done = mandel_iter_extra_data.unpack(extra_data)
             addr = y * WIDTH + x

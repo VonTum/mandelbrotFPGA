@@ -166,7 +166,8 @@ xpm_fifo_sync #(
    .CASCADE_HEIGHT(0),            // DECIMAL
    .DOUT_RESET_VALUE("0"),        // String
    .ECC_MODE("no_ecc"),           // String
-   .EN_SIM_ASSERT_ERR("error"), // String
+   // Not supported by Vivado 2023
+   //.EN_SIM_ASSERT_ERR("error"), // String
    .FIFO_MEMORY_TYPE("auto"),     // String
    .FIFO_READ_LATENCY(READ_DATA_LATENCY),         // DECIMAL
    .FIFO_WRITE_DEPTH(DEPTH),       // DECIMAL

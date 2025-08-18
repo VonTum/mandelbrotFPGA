@@ -1,4 +1,4 @@
-// THIS IS A GENERATED FILE (Generated at 2025-08-18T11:45:21+02:00)
+// THIS IS A GENERATED FILE (Generated at 2025-08-18T16:30:20+02:00)
 // This file was generated with SUS Compiler 0.3.0-devel (acc39328e93bf7270af3293edc2427590036a0c4) built at 2025-08-17T19:20:16+02:00
 // WholeMandelbrotComputer #()
 module WholeMandelbrotComputer(
@@ -6,11 +6,11 @@ module WholeMandelbrotComputer(
 	input wire rst,
 	output /*mux_wire*/ logic may_start,
 	input wire set_reg,
-	input wire[13:0] id,
+	input wire[2:0] id,
 	input wire[31:0] value,
 	output /*mux_wire*/ logic may_read_px,
 	input wire read_px,
-	output /*mux_wire*/ logic[15:0] iter_count,
+	output /*mux_wire*/ logic[31:0] iter_count,
 	output /*mux_wire*/ logic[31:0] addr,
 	output /*mux_wire*/ logic done
 );
@@ -121,80 +121,80 @@ wire _mandel_iter_may_start;
 /*latency*/ logic __mandel_iter_may_start_D26; always_ff @(posedge clk) begin __mandel_iter_may_start_D26 <= __mandel_iter_may_start_D25; end
 /*latency*/ logic __mandel_iter_may_start_D27; always_ff @(posedge clk) begin __mandel_iter_may_start_D27 <= __mandel_iter_may_start_D26; end
 /*latency*/ logic __mandel_iter_may_start_D28; always_ff @(posedge clk) begin __mandel_iter_may_start_D28 <= __mandel_iter_may_start_D27; end
-/*mux_wire*/ logic[5:0] x;
-/*mux_wire*/ logic[5:0] y;
+/*mux_wire*/ logic[9:0] x;
+/*mux_wire*/ logic[9:0] y;
 /*mux_wire*/ logic _pixel_producer_next;
-wire[5:0] _pixel_producer_x;
-wire[5:0] _pixel_producer_y;
+wire[9:0] _pixel_producer_x;
+wire[9:0] _pixel_producer_y;
 /*mux_wire*/ logic[31:0] r;
 /*mux_wire*/ logic[31:0] i;
 /*mux_wire*/ logic _PixelToComplex_PixelToComplex;
 /*mux_wire*/ logic[31:0] _PixelToComplex_origin_r;
 /*mux_wire*/ logic[31:0] _PixelToComplex_origin_i;
 /*mux_wire*/ logic[31:0] _PixelToComplex_step;
-/*mux_wire*/ logic[5:0] _PixelToComplex_px_x;
-/*mux_wire*/ logic[5:0] _PixelToComplex_px_y;
+/*mux_wire*/ logic[9:0] _PixelToComplex_px_x;
+/*mux_wire*/ logic[9:0] _PixelToComplex_px_y;
 wire[31:0] _PixelToComplex_r;
 wire[31:0] _PixelToComplex_i;
 wire _pixel_producer_last;
-/*mux_wire*/ logic[5:0] _mandel_iter_extra_data_v1_i;
-/*mux_wire*/ logic[5:0] _mandel_iter_extra_data_v2_i;
+/*mux_wire*/ logic[9:0] _mandel_iter_extra_data_v1_i;
+/*mux_wire*/ logic[9:0] _mandel_iter_extra_data_v2_i;
 /*mux_wire*/ logic _mandel_iter_extra_data_v3_i;
-wire[12:0] _mandel_iter_extra_data_packed_o;
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D7; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D7 <= _mandel_iter_extra_data_packed_o; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D8; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D8 <= __mandel_iter_extra_data_packed_o_D7; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D9; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D9 <= __mandel_iter_extra_data_packed_o_D8; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D10; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D10 <= __mandel_iter_extra_data_packed_o_D9; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D11; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D11 <= __mandel_iter_extra_data_packed_o_D10; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D12; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D12 <= __mandel_iter_extra_data_packed_o_D11; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D13; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D13 <= __mandel_iter_extra_data_packed_o_D12; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D14; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D14 <= __mandel_iter_extra_data_packed_o_D13; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D15; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D15 <= __mandel_iter_extra_data_packed_o_D14; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D16; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D16 <= __mandel_iter_extra_data_packed_o_D15; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D17; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D17 <= __mandel_iter_extra_data_packed_o_D16; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D18; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D18 <= __mandel_iter_extra_data_packed_o_D17; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D19; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D19 <= __mandel_iter_extra_data_packed_o_D18; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D20; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D20 <= __mandel_iter_extra_data_packed_o_D19; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D21; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D21 <= __mandel_iter_extra_data_packed_o_D20; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D22; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D22 <= __mandel_iter_extra_data_packed_o_D21; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D23; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D23 <= __mandel_iter_extra_data_packed_o_D22; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D24; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D24 <= __mandel_iter_extra_data_packed_o_D23; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D25; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D25 <= __mandel_iter_extra_data_packed_o_D24; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D26; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D26 <= __mandel_iter_extra_data_packed_o_D25; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D27; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D27 <= __mandel_iter_extra_data_packed_o_D26; end
-/*latency*/ logic[12:0] __mandel_iter_extra_data_packed_o_D28; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D28 <= __mandel_iter_extra_data_packed_o_D27; end
+wire[20:0] _mandel_iter_extra_data_packed_o;
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D7; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D7 <= _mandel_iter_extra_data_packed_o; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D8; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D8 <= __mandel_iter_extra_data_packed_o_D7; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D9; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D9 <= __mandel_iter_extra_data_packed_o_D8; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D10; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D10 <= __mandel_iter_extra_data_packed_o_D9; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D11; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D11 <= __mandel_iter_extra_data_packed_o_D10; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D12; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D12 <= __mandel_iter_extra_data_packed_o_D11; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D13; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D13 <= __mandel_iter_extra_data_packed_o_D12; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D14; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D14 <= __mandel_iter_extra_data_packed_o_D13; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D15; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D15 <= __mandel_iter_extra_data_packed_o_D14; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D16; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D16 <= __mandel_iter_extra_data_packed_o_D15; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D17; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D17 <= __mandel_iter_extra_data_packed_o_D16; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D18; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D18 <= __mandel_iter_extra_data_packed_o_D17; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D19; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D19 <= __mandel_iter_extra_data_packed_o_D18; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D20; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D20 <= __mandel_iter_extra_data_packed_o_D19; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D21; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D21 <= __mandel_iter_extra_data_packed_o_D20; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D22; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D22 <= __mandel_iter_extra_data_packed_o_D21; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D23; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D23 <= __mandel_iter_extra_data_packed_o_D22; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D24; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D24 <= __mandel_iter_extra_data_packed_o_D23; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D25; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D25 <= __mandel_iter_extra_data_packed_o_D24; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D26; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D26 <= __mandel_iter_extra_data_packed_o_D25; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D27; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D27 <= __mandel_iter_extra_data_packed_o_D26; end
+/*latency*/ logic[20:0] __mandel_iter_extra_data_packed_o_D28; always_ff @(posedge clk) begin __mandel_iter_extra_data_packed_o_D28 <= __mandel_iter_extra_data_packed_o_D27; end
 /*mux_wire*/ logic _mandel_iter_start;
 /*mux_wire*/ logic[31:0] _mandel_iter_r;
 /*mux_wire*/ logic[31:0] _mandel_iter_i;
-/*mux_wire*/ logic[12:0] _mandel_iter_extra_data;
-/*mux_wire*/ logic[12:0] extra_data;
+/*mux_wire*/ logic[20:0] _mandel_iter_extra_data;
+/*mux_wire*/ logic[20:0] extra_data;
 /*mux_wire*/ logic _outputFIFO_pop;
-wire[19:0] _outputFIFO_pop_data;
-/*mux_wire*/ logic[19:0] _data_packed_i;
+wire[27:0] _outputFIFO_pop_data;
+/*mux_wire*/ logic[27:0] _data_packed_i;
 wire[6:0] _data_v1_o;
-wire[12:0] _data_v2_o;
-/*mux_wire*/ logic[5:0] x_2;
-/*mux_wire*/ logic[5:0] y_2;
-/*mux_wire*/ logic[12:0] _mandel_iter_extra_data_packed_i;
-wire[5:0] _mandel_iter_extra_data_v1_o;
-wire[5:0] _mandel_iter_extra_data_v2_o;
+wire[20:0] _data_v2_o;
+/*mux_wire*/ logic[9:0] x_2;
+/*mux_wire*/ logic[9:0] y_2;
+/*mux_wire*/ logic[20:0] _mandel_iter_extra_data_packed_i;
+wire[9:0] _mandel_iter_extra_data_v1_o;
+wire[9:0] _mandel_iter_extra_data_v2_o;
 wire _mandel_iter_extra_data_v3_o;
-wire[11:0] _51;
-assign _51 = y_2 * 7'd64;
-wire[11:0] _53;
+wire[19:0] _51;
+assign _51 = y_2 * 11'd1024;
+wire[19:0] _53;
 assign _53 = _51 + x_2;
 wire _outputFIFO_may_pop;
 wire _mandel_iter_finish;
 wire[6:0] _mandel_iter_iteration_count;
-wire[12:0] _mandel_iter_extra_data_2;
+wire[20:0] _mandel_iter_extra_data_2;
 /*mux_wire*/ logic[6:0] iter_count_2;
-/*mux_wire*/ logic[12:0] extra_data_2;
+/*mux_wire*/ logic[20:0] extra_data_2;
 /*mux_wire*/ logic[6:0] _data_v1_i;
-/*mux_wire*/ logic[12:0] _data_v2_i;
-wire[19:0] _data_packed_o;
+/*mux_wire*/ logic[20:0] _data_v2_i;
+wire[27:0] _data_packed_o;
 /*mux_wire*/ logic _outputFIFO_push;
-/*mux_wire*/ logic[19:0] _outputFIFO_push_data;
-ScreenIterator__WIDTH64_HEIGHT64 pixel_producer(
+/*mux_wire*/ logic[27:0] _outputFIFO_push_data;
+ScreenIterator__WIDTH1024_HEIGHT1024 pixel_producer(
 	.clk(clk),
 	.may_next(_pixel_producer_may_next),
 	.start(_pixel_producer_start),
@@ -205,7 +205,7 @@ ScreenIterator__WIDTH64_HEIGHT64 pixel_producer(
 	.y(_pixel_producer_y),
 	.rst(_pixel_producer_rst)
 );
-SameCycleReadFIFO__Ttypebool____20__DEPTH64_MAY_PUSH_LATENCY22_EXTRA_IN_FLIGHT2 outputFIFO(
+SameCycleReadFIFO__Ttypebool____28__DEPTH64_MAY_PUSH_LATENCY22_EXTRA_IN_FLIGHT2 outputFIFO(
 	.clk(clk),
 	.rst(_outputFIFO_rst),
 	.may_push(_outputFIFO_may_push),
@@ -215,7 +215,7 @@ SameCycleReadFIFO__Ttypebool____20__DEPTH64_MAY_PUSH_LATENCY22_EXTRA_IN_FLIGHT2 
 	.pop(_outputFIFO_pop),
 	.pop_data(_outputFIFO_pop_data)
 );
-MandelbrotSlowIter2__ExtraDataTtypebool____13__INPUT_DATA_LATENCY22 mandel_iter(
+MandelbrotSlowIter2__ExtraDataTtypebool____21__INPUT_DATA_LATENCY22 mandel_iter(
 	.clk(clk),
 	.rst(_mandel_iter_rst),
 	.may_start(_mandel_iter_may_start),
@@ -227,7 +227,7 @@ MandelbrotSlowIter2__ExtraDataTtypebool____13__INPUT_DATA_LATENCY22 mandel_iter(
 	.iteration_count(_mandel_iter_iteration_count),
 	.extra_data_2(_mandel_iter_extra_data_2)
 );
-tuple3__T1typeint__FROM0_TO64__T2typeint__FROM0_TO64__T3typebool mandel_iter_extra_data(
+tuple3__T1typeint__FROM0_TO1024__T2typeint__FROM0_TO1024__T3typebool mandel_iter_extra_data(
 	.clk(clk),
 	.v1_i(_mandel_iter_extra_data_v1_i),
 	.v2_i(_mandel_iter_extra_data_v2_i),
@@ -238,7 +238,7 @@ tuple3__T1typeint__FROM0_TO64__T2typeint__FROM0_TO64__T3typebool mandel_iter_ext
 	.v2_o(_mandel_iter_extra_data_v2_o),
 	.v3_o(_mandel_iter_extra_data_v3_o)
 );
-PixelToComplex__WIDTH64_HEIGHT64 PixelToComplex(
+PixelToComplex__WIDTH1024_HEIGHT1024 PixelToComplex(
 	.clk(clk),
 	.PixelToComplex(_PixelToComplex_PixelToComplex),
 	.origin_r(_PixelToComplex_origin_r),
@@ -249,7 +249,7 @@ PixelToComplex__WIDTH64_HEIGHT64 PixelToComplex(
 	.r(_PixelToComplex_r),
 	.i(_PixelToComplex_i)
 );
-tuple2__T1typeint__FROM0_TO101__T2typebool____13 data(
+tuple2__T1typeint__FROM0_TO101__T2typebool____21 data(
 	.clk(clk),
 	.v1_i(_data_v1_i),
 	.v2_i(_data_v2_i),
@@ -303,12 +303,12 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	x = 6'dx;
+	x = 10'dx;
 	if(_28) if(_mandel_iter_may_start) x = _pixel_producer_x;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	y = 6'dx;
+	y = 10'dx;
 	if(_28) if(_mandel_iter_may_start) y = _pixel_producer_y;
 end
 always_comb begin
@@ -350,22 +350,22 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_PixelToComplex_px_x = 6'dx;
+	_PixelToComplex_px_x = 10'dx;
 	if(_28) if(_mandel_iter_may_start) _PixelToComplex_px_x = x;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_PixelToComplex_px_y = 6'dx;
+	_PixelToComplex_px_y = 10'dx;
 	if(_28) if(_mandel_iter_may_start) _PixelToComplex_px_y = y;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_mandel_iter_extra_data_v1_i = 6'dx;
+	_mandel_iter_extra_data_v1_i = 10'dx;
 	if(_28) if(_mandel_iter_may_start) _mandel_iter_extra_data_v1_i = x;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_mandel_iter_extra_data_v2_i = 6'dx;
+	_mandel_iter_extra_data_v2_i = 10'dx;
 	if(_28) if(_mandel_iter_may_start) _mandel_iter_extra_data_v2_i = y;
 end
 always_comb begin
@@ -391,7 +391,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_mandel_iter_extra_data = 13'bxxxxxxxxxxxxx;
+	_mandel_iter_extra_data = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	if(__28_D28) if(__mandel_iter_may_start_D28) _mandel_iter_extra_data = __mandel_iter_extra_data_packed_o_D28;
 end
 always_comb begin
@@ -402,7 +402,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	iter_count = 16'dx;
+	iter_count = 32'dx;
 	if(may_read_px) if(read_px) iter_count = _data_v1_o;
 end
 always_comb begin
@@ -417,7 +417,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	extra_data = 13'bxxxxxxxxxxxxx;
+	extra_data = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	if(may_read_px) if(read_px) extra_data = _data_v2_o;
 end
 always_comb begin
@@ -428,22 +428,22 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_data_packed_i = 20'bxxxxxxxxxxxxxxxxxxxx;
+	_data_packed_i = 28'bxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 	if(may_read_px) if(read_px) _data_packed_i = _outputFIFO_pop_data;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	x_2 = 6'dx;
+	x_2 = 10'dx;
 	if(may_read_px) if(read_px) x_2 = _mandel_iter_extra_data_v1_o;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	y_2 = 6'dx;
+	y_2 = 10'dx;
 	if(may_read_px) if(read_px) y_2 = _mandel_iter_extra_data_v2_o;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_mandel_iter_extra_data_packed_i = 13'bxxxxxxxxxxxxx;
+	_mandel_iter_extra_data_packed_i = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	if(may_read_px) if(read_px) _mandel_iter_extra_data_packed_i = extra_data;
 end
 always_comb begin
@@ -453,7 +453,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	extra_data_2 = 13'bxxxxxxxxxxxxx;
+	extra_data_2 = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	if(_mandel_iter_finish) extra_data_2 = _mandel_iter_extra_data_2;
 end
 always_comb begin
@@ -463,7 +463,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_data_v2_i = 13'bxxxxxxxxxxxxx;
+	_data_v2_i = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	if(_mandel_iter_finish) _data_v2_i = extra_data_2;
 end
 always_comb begin
@@ -474,54 +474,54 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_outputFIFO_push_data = 20'bxxxxxxxxxxxxxxxxxxxx;
+	_outputFIFO_push_data = 28'bxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 	if(_mandel_iter_finish) _outputFIFO_push_data = _data_packed_o;
 end
 endmodule
 
-// ScreenIterator #(WIDTH: 64, HEIGHT: 64)
-module ScreenIterator__WIDTH64_HEIGHT64(
+// ScreenIterator #(WIDTH: 1024, HEIGHT: 1024)
+module ScreenIterator__WIDTH1024_HEIGHT1024(
 	input clk,
 	output /*state*/ logic may_next,
 	input wire start,
 	output /*mux_wire*/ logic last,
 	output /*mux_wire*/ logic may_start,
 	input wire next,
-	output /*mux_wire*/ logic[5:0] x,
-	output /*mux_wire*/ logic[5:0] y,
+	output /*mux_wire*/ logic[9:0] x,
+	output /*mux_wire*/ logic[9:0] y,
 	input wire rst
 );
 
-/*state*/ logic[5:0] cur_x;
-/*state*/ logic[5:0] cur_y;
+/*state*/ logic[9:0] cur_x;
+/*state*/ logic[9:0] cur_y;
 /*mux_wire*/ logic x_at_end;
 wire _6;
-assign _6 = cur_x == 6'd63;
+assign _6 = cur_x == 10'd1023;
 /*mux_wire*/ logic y_at_end;
 wire _9;
-assign _9 = cur_y == 6'd63;
+assign _9 = cur_y == 10'd1023;
 wire _12;
 assign _12 = !may_next;
-wire[6:0] _21;
+wire[10:0] _21;
 assign _21 = cur_y + 1'd1;
-/*mux_wire*/ logic[6:0] _unsafe_int_cast_in;
-wire[5:0] _unsafe_int_cast_out;
-wire[6:0] _24;
+/*mux_wire*/ logic[10:0] _unsafe_int_cast_in;
+wire[9:0] _unsafe_int_cast_out;
+wire[10:0] _24;
 assign _24 = cur_x + 1'd1;
-/*mux_wire*/ logic[6:0] _unsafe_int_cast_2_in;
-wire[5:0] _unsafe_int_cast_2_out;
+/*mux_wire*/ logic[10:0] _unsafe_int_cast_2_in;
+wire[9:0] _unsafe_int_cast_2_out;
 wire _26;
 assign _26 = !x_at_end;
 wire _28;
 assign _28 = !y_at_end;
 wire _29;
 assign _29 = _26 | _28;
-unsafe_int_cast__FROM_I1_TO_I65_FROM0_TO64 unsafe_int_cast(
+unsafe_int_cast__FROM_I1_TO_I1025_FROM0_TO1024 unsafe_int_cast(
 	.clk(clk),
 	.in(_unsafe_int_cast_in),
 	.out(_unsafe_int_cast_out)
 );
-unsafe_int_cast__FROM_I1_TO_I65_FROM0_TO64 unsafe_int_cast_2(
+unsafe_int_cast__FROM_I1_TO_I1025_FROM0_TO1024 unsafe_int_cast_2(
 	.clk(clk),
 	.in(_unsafe_int_cast_2_in),
 	.out(_unsafe_int_cast_2_out)
@@ -530,12 +530,12 @@ always_ff @(posedge clk) begin
 	if(start) cur_x <= 1'd0;
 	if(next) if(x_at_end) cur_x <= 1'd0;
 	if(next) if(!x_at_end) cur_x <= _unsafe_int_cast_2_out;
-	if(rst) cur_x <= 6'd63;
+	if(rst) cur_x <= 10'd1023;
 end
 always_ff @(posedge clk) begin
 	if(start) cur_y <= 1'd0;
 	if(next) if(x_at_end) if(!y_at_end) cur_y <= _unsafe_int_cast_out;
-	if(rst) cur_y <= 6'd63;
+	if(rst) cur_y <= 10'd1023;
 end
 always_ff @(posedge clk) begin
 	if(start) may_next <= 1'b1;
@@ -565,52 +565,52 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	x = 6'dx;
+	x = 10'dx;
 	if(next) x = cur_x;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	y = 6'dx;
+	y = 10'dx;
 	if(next) y = cur_y;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_unsafe_int_cast_in = 7'dx;
+	_unsafe_int_cast_in = 11'dx;
 	if(next) if(x_at_end) if(!y_at_end) _unsafe_int_cast_in = _21;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_unsafe_int_cast_2_in = 7'dx;
+	_unsafe_int_cast_2_in = 11'dx;
 	if(next) if(!x_at_end) _unsafe_int_cast_2_in = _24;
 end
 endmodule
 
-// SameCycleReadFIFO #(T: type bool #()[20], DEPTH: 64, MAY_PUSH_LATENCY: 22, EXTRA_IN_FLIGHT: 2)
-module SameCycleReadFIFO__Ttypebool____20__DEPTH64_MAY_PUSH_LATENCY22_EXTRA_IN_FLIGHT2(
+// SameCycleReadFIFO #(T: type bool #()[28], DEPTH: 64, MAY_PUSH_LATENCY: 22, EXTRA_IN_FLIGHT: 2)
+module SameCycleReadFIFO__Ttypebool____28__DEPTH64_MAY_PUSH_LATENCY22_EXTRA_IN_FLIGHT2(
 	input clk,
 	input wire rst,
 	output /*mux_wire*/ logic may_push,
 	input wire push,
-	input wire[19:0] push_data,
+	input wire[27:0] push_data,
 	output /*mux_wire*/ logic may_pop,
 	input wire pop,
-	output /*mux_wire*/ logic[19:0] pop_data
+	output /*mux_wire*/ logic[27:0] pop_data
 );
 
 /*mux_wire*/ logic _fifo_rst;
 wire _fifo_may_push;
-/*mux_wire*/ logic[19:0] as_bits;
-/*mux_wire*/ logic[19:0] _transmute_to_bits_value;
-wire[19:0] _transmute_to_bits_bits;
+/*mux_wire*/ logic[27:0] as_bits;
+/*mux_wire*/ logic[27:0] _transmute_to_bits_value;
+wire[27:0] _transmute_to_bits_bits;
 /*mux_wire*/ logic _fifo_push;
-/*mux_wire*/ logic[19:0] _fifo_push_data;
+/*mux_wire*/ logic[27:0] _fifo_push_data;
 wire _fifo_may_pop;
-/*mux_wire*/ logic[19:0] pop_data_as_bits;
+/*mux_wire*/ logic[27:0] pop_data_as_bits;
 /*mux_wire*/ logic _fifo_pop;
-wire[19:0] _fifo_pop_data;
-/*mux_wire*/ logic[19:0] _transmute_from_bits_bits;
-wire[19:0] _transmute_from_bits_value;
-RawFIFO #(.WIDTH(20), .DEPTH(64), .MAY_PUSH_LATENCY(22), .EXTRA_IN_FLIGHT(2), .READ_DATA_LATENCY(0)) fifo(
+wire[27:0] _fifo_pop_data;
+/*mux_wire*/ logic[27:0] _transmute_from_bits_bits;
+wire[27:0] _transmute_from_bits_value;
+RawFIFO #(.WIDTH(28), .DEPTH(64), .MAY_PUSH_LATENCY(22), .EXTRA_IN_FLIGHT(2), .READ_DATA_LATENCY(0)) fifo(
 	.clk(clk),
 	.rst(_fifo_rst),
 	.may_push(_fifo_may_push),
@@ -620,12 +620,12 @@ RawFIFO #(.WIDTH(20), .DEPTH(64), .MAY_PUSH_LATENCY(22), .EXTRA_IN_FLIGHT(2), .R
 	.pop(_fifo_pop),
 	.pop_data(_fifo_pop_data)
 );
-transmute_to_bits__Ttypebool____20 transmute_to_bits(
+transmute_to_bits__Ttypebool____28 transmute_to_bits(
 	.clk(clk),
 	.value(_transmute_to_bits_value),
 	.bits(_transmute_to_bits_bits)
 );
-transmute_from_bits__Ttypebool____20 transmute_from_bits(
+transmute_from_bits__Ttypebool____28 transmute_from_bits(
 	.clk(clk),
 	.bits(_transmute_from_bits_bits),
 	.value(_transmute_from_bits_value)
@@ -643,12 +643,12 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	as_bits = 20'bxxxxxxxxxxxxxxxxxxxx;
+	as_bits = 28'bxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 	if(push) as_bits = _transmute_to_bits_bits;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_transmute_to_bits_value = 20'bxxxxxxxxxxxxxxxxxxxx;
+	_transmute_to_bits_value = 28'bxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 	if(push) _transmute_to_bits_value = push_data;
 end
 always_comb begin
@@ -659,7 +659,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_fifo_push_data = 20'bxxxxxxxxxxxxxxxxxxxx;
+	_fifo_push_data = 28'bxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 	if(push) _fifo_push_data = as_bits;
 end
 always_comb begin
@@ -669,12 +669,12 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	pop_data = 20'bxxxxxxxxxxxxxxxxxxxx;
+	pop_data = 28'bxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 	if(pop) pop_data = _transmute_from_bits_value;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	pop_data_as_bits = 20'bxxxxxxxxxxxxxxxxxxxx;
+	pop_data_as_bits = 28'bxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 	if(pop) pop_data_as_bits = _fifo_pop_data;
 end
 always_comb begin
@@ -685,23 +685,23 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_transmute_from_bits_bits = 20'bxxxxxxxxxxxxxxxxxxxx;
+	_transmute_from_bits_bits = 28'bxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 	if(pop) _transmute_from_bits_bits = pop_data_as_bits;
 end
 endmodule
 
-// MandelbrotSlowIter2 #(ExtraDataT: type bool #()[13], INPUT_DATA_LATENCY: 22)
-module MandelbrotSlowIter2__ExtraDataTtypebool____13__INPUT_DATA_LATENCY22(
+// MandelbrotSlowIter2 #(ExtraDataT: type bool #()[21], INPUT_DATA_LATENCY: 22)
+module MandelbrotSlowIter2__ExtraDataTtypebool____21__INPUT_DATA_LATENCY22(
 	input clk,
 	input wire rst,
 	output /*mux_wire*/ logic may_start,
 	input wire start,
 	input wire[31:0] r,
 	input wire[31:0] i,
-	input wire[12:0] extra_data,
+	input wire[20:0] extra_data,
 	output /*mux_wire*/ logic finish,
 	output /*mux_wire*/ logic[6:0] iteration_count,
-	output /*mux_wire*/ logic[12:0] extra_data_2
+	output /*mux_wire*/ logic[20:0] extra_data_2
 );
 
 /*mux_wire*/ logic _iter_rst;
@@ -711,7 +711,7 @@ assign _7[0] = r;
 assign _7[1] = i;
 /*mux_wire*/ logic _iter_start;
 /*mux_wire*/ logic[31:0] _iter_initial_data[1:0];
-/*mux_wire*/ logic[12:0] _iter_extra_data;
+/*mux_wire*/ logic[20:0] _iter_extra_data;
 wire _iter_finish;
 /*latency*/ logic __iter_finish_N21; always_ff @(posedge clk) begin __iter_finish_N21 <= _iter_finish; end
 /*latency*/ logic __iter_finish_N20; always_ff @(posedge clk) begin __iter_finish_N20 <= __iter_finish_N21; end
@@ -736,7 +736,7 @@ wire _iter_finish;
 /*latency*/ logic __iter_finish_N1; always_ff @(posedge clk) begin __iter_finish_N1 <= __iter_finish_N2; end
 /*latency*/ logic __iter_finish_D0; always_ff @(posedge clk) begin __iter_finish_D0 <= __iter_finish_N1; end
 wire[6:0] _iter_result_data;
-wire[12:0] _iter_extra_result_data;
+wire[20:0] _iter_extra_result_data;
 /*mux_wire*/ logic[6:0] iteration_count_2;
 /*latency*/ logic[6:0] _iteration_count_2_N21; always_ff @(posedge clk) begin _iteration_count_2_N21 <= iteration_count_2; end
 /*latency*/ logic[6:0] _iteration_count_2_N20; always_ff @(posedge clk) begin _iteration_count_2_N20 <= _iteration_count_2_N21; end
@@ -760,17 +760,13 @@ wire[12:0] _iter_extra_result_data;
 /*latency*/ logic[6:0] _iteration_count_2_N2; always_ff @(posedge clk) begin _iteration_count_2_N2 <= _iteration_count_2_N3; end
 /*latency*/ logic[6:0] _iteration_count_2_N1; always_ff @(posedge clk) begin _iteration_count_2_N1 <= _iteration_count_2_N2; end
 /*latency*/ logic[6:0] _iteration_count_2_D0; always_ff @(posedge clk) begin _iteration_count_2_D0 <= _iteration_count_2_N1; end
-/*mux_wire*/ logic[12:0] extra_data_3;
+/*mux_wire*/ logic[20:0] extra_data_3;
 /*mux_wire*/ logic[31:0] zero;
 /*mux_wire*/ logic _fp_fromint_fp_fromint;
 /*mux_wire*/ logic signed[31:0] _fp_fromint_a;
 wire[31:0] _fp_fromint_result;
 wire _iter_iter;
-/*latency*/ logic __iter_iter_D997; always_ff @(posedge clk) begin __iter_iter_D997 <= _iter_iter; end
-/*latency*/ logic __iter_iter_D998; always_ff @(posedge clk) begin __iter_iter_D998 <= __iter_iter_D997; end
-/*latency*/ logic __iter_iter_D999; always_ff @(posedge clk) begin __iter_iter_D999 <= __iter_iter_D998; end
-/*latency*/ logic __iter_iter_D1000; always_ff @(posedge clk) begin __iter_iter_D1000 <= __iter_iter_D999; end
-/*latency*/ logic __iter_iter_D1001; always_ff @(posedge clk) begin __iter_iter_D1001 <= __iter_iter_D1000; end
+/*latency*/ logic __iter_iter_D1001; always_ff @(posedge clk) begin __iter_iter_D1001 <= _iter_iter; end
 /*latency*/ logic __iter_iter_D1002; always_ff @(posedge clk) begin __iter_iter_D1002 <= __iter_iter_D1001; end
 /*latency*/ logic __iter_iter_D1003; always_ff @(posedge clk) begin __iter_iter_D1003 <= __iter_iter_D1002; end
 /*latency*/ logic __iter_iter_D1004; always_ff @(posedge clk) begin __iter_iter_D1004 <= __iter_iter_D1003; end
@@ -823,10 +819,6 @@ wire _iter_iter;
 /*latency*/ logic __iter_iter_D1051; always_ff @(posedge clk) begin __iter_iter_D1051 <= __iter_iter_D1050; end
 wire[5:0] _iter_iter_sentinel_out;
 /*mux_wire*/ logic[5:0] sentinel;
-/*latency*/ logic[5:0] _sentinel_D997; always_ff @(posedge clk) begin _sentinel_D997 <= sentinel; end
-/*latency*/ logic[5:0] _sentinel_D998; always_ff @(posedge clk) begin _sentinel_D998 <= _sentinel_D997; end
-/*latency*/ logic[5:0] _sentinel_D999; always_ff @(posedge clk) begin _sentinel_D999 <= _sentinel_D998; end
-/*latency*/ logic[5:0] _sentinel_D1000; always_ff @(posedge clk) begin _sentinel_D1000 <= _sentinel_D999; end
 /*mux_wire*/ logic _z_r_link;
 /*mux_wire*/ logic[5:0] _z_r__sentinel;
 /*mux_wire*/ logic _z_i_link;
@@ -838,10 +830,6 @@ wire[5:0] _iter_iter_sentinel_out;
 /*mux_wire*/ logic _iteration_link;
 /*mux_wire*/ logic[5:0] _iteration__sentinel;
 wire _iter_is_initial;
-/*latency*/ logic __iter_is_initial_D997; always_ff @(posedge clk) begin __iter_is_initial_D997 <= _iter_is_initial; end
-/*latency*/ logic __iter_is_initial_D998; always_ff @(posedge clk) begin __iter_is_initial_D998 <= __iter_is_initial_D997; end
-/*latency*/ logic __iter_is_initial_D999; always_ff @(posedge clk) begin __iter_is_initial_D999 <= __iter_is_initial_D998; end
-/*latency*/ logic __iter_is_initial_D1000; always_ff @(posedge clk) begin __iter_is_initial_D1000 <= __iter_is_initial_D999; end
 wire[31:0] _iter_initial_data_2[1:0];
 /*mux_wire*/ logic[31:0] init_data[1:0];
 /*mux_wire*/ logic _z_r_init;
@@ -860,11 +848,7 @@ wire[31:0] _42 = init_data[1];
 wire[31:0] _z_r_old;
 wire[31:0] _z_i_old;
 wire[31:0] _c_r_old;
-/*latency*/ logic[31:0] __c_r_old_D997; always_ff @(posedge clk) begin __c_r_old_D997 <= _c_r_old; end
-/*latency*/ logic[31:0] __c_r_old_D998; always_ff @(posedge clk) begin __c_r_old_D998 <= __c_r_old_D997; end
-/*latency*/ logic[31:0] __c_r_old_D999; always_ff @(posedge clk) begin __c_r_old_D999 <= __c_r_old_D998; end
-/*latency*/ logic[31:0] __c_r_old_D1000; always_ff @(posedge clk) begin __c_r_old_D1000 <= __c_r_old_D999; end
-/*latency*/ logic[31:0] __c_r_old_D1001; always_ff @(posedge clk) begin __c_r_old_D1001 <= __c_r_old_D1000; end
+/*latency*/ logic[31:0] __c_r_old_D1001; always_ff @(posedge clk) begin __c_r_old_D1001 <= _c_r_old; end
 /*latency*/ logic[31:0] __c_r_old_D1002; always_ff @(posedge clk) begin __c_r_old_D1002 <= __c_r_old_D1001; end
 /*latency*/ logic[31:0] __c_r_old_D1003; always_ff @(posedge clk) begin __c_r_old_D1003 <= __c_r_old_D1002; end
 /*latency*/ logic[31:0] __c_r_old_D1004; always_ff @(posedge clk) begin __c_r_old_D1004 <= __c_r_old_D1003; end
@@ -884,11 +868,7 @@ wire[31:0] _c_r_old;
 /*latency*/ logic[31:0] __c_r_old_D1018; always_ff @(posedge clk) begin __c_r_old_D1018 <= __c_r_old_D1017; end
 /*latency*/ logic[31:0] __c_r_old_D1019; always_ff @(posedge clk) begin __c_r_old_D1019 <= __c_r_old_D1018; end
 wire[31:0] _c_i_old;
-/*latency*/ logic[31:0] __c_i_old_D997; always_ff @(posedge clk) begin __c_i_old_D997 <= _c_i_old; end
-/*latency*/ logic[31:0] __c_i_old_D998; always_ff @(posedge clk) begin __c_i_old_D998 <= __c_i_old_D997; end
-/*latency*/ logic[31:0] __c_i_old_D999; always_ff @(posedge clk) begin __c_i_old_D999 <= __c_i_old_D998; end
-/*latency*/ logic[31:0] __c_i_old_D1000; always_ff @(posedge clk) begin __c_i_old_D1000 <= __c_i_old_D999; end
-/*latency*/ logic[31:0] __c_i_old_D1001; always_ff @(posedge clk) begin __c_i_old_D1001 <= __c_i_old_D1000; end
+/*latency*/ logic[31:0] __c_i_old_D1001; always_ff @(posedge clk) begin __c_i_old_D1001 <= _c_i_old; end
 /*latency*/ logic[31:0] __c_i_old_D1002; always_ff @(posedge clk) begin __c_i_old_D1002 <= __c_i_old_D1001; end
 /*latency*/ logic[31:0] __c_i_old_D1003; always_ff @(posedge clk) begin __c_i_old_D1003 <= __c_i_old_D1002; end
 /*latency*/ logic[31:0] __c_i_old_D1004; always_ff @(posedge clk) begin __c_i_old_D1004 <= __c_i_old_D1003; end
@@ -920,11 +900,7 @@ wire _MandelbrotStep_is_done;
 /*mux_wire*/ logic[31:0] _c_r_new;
 /*mux_wire*/ logic[31:0] _c_i_new;
 wire[6:0] _iteration_old;
-/*latency*/ logic[6:0] __iteration_old_D997; always_ff @(posedge clk) begin __iteration_old_D997 <= _iteration_old; end
-/*latency*/ logic[6:0] __iteration_old_D998; always_ff @(posedge clk) begin __iteration_old_D998 <= __iteration_old_D997; end
-/*latency*/ logic[6:0] __iteration_old_D999; always_ff @(posedge clk) begin __iteration_old_D999 <= __iteration_old_D998; end
-/*latency*/ logic[6:0] __iteration_old_D1000; always_ff @(posedge clk) begin __iteration_old_D1000 <= __iteration_old_D999; end
-/*latency*/ logic[6:0] __iteration_old_D1001; always_ff @(posedge clk) begin __iteration_old_D1001 <= __iteration_old_D1000; end
+/*latency*/ logic[6:0] __iteration_old_D1001; always_ff @(posedge clk) begin __iteration_old_D1001 <= _iteration_old; end
 /*latency*/ logic[6:0] __iteration_old_D1002; always_ff @(posedge clk) begin __iteration_old_D1002 <= __iteration_old_D1001; end
 /*latency*/ logic[6:0] __iteration_old_D1003; always_ff @(posedge clk) begin __iteration_old_D1003 <= __iteration_old_D1002; end
 /*latency*/ logic[6:0] __iteration_old_D1004; always_ff @(posedge clk) begin __iteration_old_D1004 <= __iteration_old_D1003; end
@@ -984,11 +960,7 @@ wire[6:0] _unsafe_int_cast_out;
 /*mux_wire*/ logic[6:0] _iter_result;
 wire _65;
 assign _65 = _iteration_old == 7'd99;
-/*latency*/ logic __65_D997; always_ff @(posedge clk) begin __65_D997 <= _65; end
-/*latency*/ logic __65_D998; always_ff @(posedge clk) begin __65_D998 <= __65_D997; end
-/*latency*/ logic __65_D999; always_ff @(posedge clk) begin __65_D999 <= __65_D998; end
-/*latency*/ logic __65_D1000; always_ff @(posedge clk) begin __65_D1000 <= __65_D999; end
-/*latency*/ logic __65_D1001; always_ff @(posedge clk) begin __65_D1001 <= __65_D1000; end
+/*latency*/ logic __65_D1001; always_ff @(posedge clk) begin __65_D1001 <= _65; end
 /*latency*/ logic __65_D1002; always_ff @(posedge clk) begin __65_D1002 <= __65_D1001; end
 /*latency*/ logic __65_D1003; always_ff @(posedge clk) begin __65_D1003 <= __65_D1002; end
 /*latency*/ logic __65_D1004; always_ff @(posedge clk) begin __65_D1004 <= __65_D1003; end
@@ -1039,7 +1011,7 @@ assign _65 = _iteration_old == 7'd99;
 /*latency*/ logic __65_D1049; always_ff @(posedge clk) begin __65_D1049 <= __65_D1048; end
 /*latency*/ logic __65_D1050; always_ff @(posedge clk) begin __65_D1050 <= __65_D1049; end
 /*latency*/ logic __65_D1051; always_ff @(posedge clk) begin __65_D1051 <= __65_D1050; end
-SlowIterator2__InitialTtypefloat____2__ResultTtypeint__FROM0_TO101__ExtraDataTtypebool____13__COMPUTATION_LATENCY55_REQUEST_DATA_LATENCY22 iter(
+SlowIterator2__InitialTtypefloat____2__ResultTtypeint__FROM0_TO101__ExtraDataTtypebool____21__COMPUTATION_LATENCY51_REQUEST_DATA_LATENCY22 iter(
 	.clk(clk),
 	.rst(_iter_rst),
 	.iter(_iter_iter),
@@ -1056,7 +1028,7 @@ SlowIterator2__InitialTtypefloat____2__ResultTtypeint__FROM0_TO101__ExtraDataTty
 	.result_data(_iter_result_data),
 	.extra_result_data(_iter_extra_result_data)
 );
-SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY30 z_r(
+SlowIteratorState__Ttypefloat____MAX_LATENCY52_LATENCY30 z_r(
 	.clk(clk),
 	.link(_z_r_link),
 	._sentinel(_z_r__sentinel),
@@ -1065,7 +1037,7 @@ SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY30 z_r(
 	.init(_z_r_init),
 	.initial_data(_z_r_initial_data)
 );
-SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY30 z_i(
+SlowIteratorState__Ttypefloat____MAX_LATENCY52_LATENCY30 z_i(
 	.clk(clk),
 	.link(_z_i_link),
 	._sentinel(_z_i__sentinel),
@@ -1074,7 +1046,7 @@ SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY30 z_i(
 	.init(_z_i_init),
 	.initial_data(_z_i_initial_data)
 );
-SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY0 c_r(
+SlowIteratorState__Ttypefloat____MAX_LATENCY52_LATENCY0 c_r(
 	.clk(clk),
 	.link(_c_r_link),
 	._sentinel(_c_r__sentinel),
@@ -1083,7 +1055,7 @@ SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY0 c_r(
 	.init(_c_r_init),
 	.initial_data(_c_r_initial_data)
 );
-SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY0 c_i(
+SlowIteratorState__Ttypefloat____MAX_LATENCY52_LATENCY0 c_i(
 	.clk(clk),
 	.link(_c_i_link),
 	._sentinel(_c_i__sentinel),
@@ -1092,7 +1064,7 @@ SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY0 c_i(
 	.init(_c_i_init),
 	.initial_data(_c_i_initial_data)
 );
-SlowIteratorState__Ttypeint__FROM0_TO100__MAX_LATENCY56_LATENCY0 iteration(
+SlowIteratorState__Ttypeint__FROM0_TO100__MAX_LATENCY52_LATENCY0 iteration(
 	.clk(clk),
 	.link(_iteration_link),
 	._sentinel(_iteration__sentinel),
@@ -1150,7 +1122,7 @@ end
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_iter_extra_data = 13'bxxxxxxxxxxxxx;
+	_iter_extra_data = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	if(start) _iter_extra_data = extra_data;
 end
 always_comb begin
@@ -1166,7 +1138,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	extra_data_2 = 13'bxxxxxxxxxxxxx;
+	extra_data_2 = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	if(__iter_finish_D0) extra_data_2 = extra_data_3;
 end
 always_comb begin
@@ -1176,7 +1148,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	extra_data_3 = 13'bxxxxxxxxxxxxx;
+	extra_data_3 = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	if(__iter_finish_D0) extra_data_3 = _iter_extra_result_data;
 end
 always_comb begin
@@ -1204,23 +1176,23 @@ always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_z_r_link = 1'bx;
 	_z_r_link = 1'b0;
-	if(__iter_iter_D1000) _z_r_link = 1'b1;
+	if(_iter_iter) _z_r_link = 1'b1;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_z_r__sentinel = 6'dx;
-	if(__iter_iter_D1000) _z_r__sentinel = _sentinel_D1000;
+	if(_iter_iter) _z_r__sentinel = sentinel;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_z_i_link = 1'bx;
 	_z_i_link = 1'b0;
-	if(__iter_iter_D1000) _z_i_link = 1'b1;
+	if(_iter_iter) _z_i_link = 1'b1;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_z_i__sentinel = 6'dx;
-	if(__iter_iter_D1000) _z_i__sentinel = _sentinel_D1000;
+	if(_iter_iter) _z_i__sentinel = sentinel;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
@@ -1266,23 +1238,23 @@ always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_z_r_init = 1'bx;
 	_z_r_init = 1'b0;
-	if(__iter_iter_D1000) if(__iter_is_initial_D1000) _z_r_init = 1'b1;
+	if(_iter_iter) if(_iter_is_initial) _z_r_init = 1'b1;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_z_r_initial_data = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
-	if(__iter_iter_D1000) if(__iter_is_initial_D1000) _z_r_initial_data = zero;
+	if(_iter_iter) if(_iter_is_initial) _z_r_initial_data = zero;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_z_i_init = 1'bx;
 	_z_i_init = 1'b0;
-	if(__iter_iter_D1000) if(__iter_is_initial_D1000) _z_i_init = 1'b1;
+	if(_iter_iter) if(_iter_is_initial) _z_i_init = 1'b1;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_z_i_initial_data = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
-	if(__iter_iter_D1000) if(__iter_is_initial_D1000) _z_i_initial_data = zero;
+	if(_iter_iter) if(_iter_is_initial) _z_i_initial_data = zero;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
@@ -1326,17 +1298,17 @@ always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_MandelbrotStep_MandelbrotStep = 1'bx;
 	_MandelbrotStep_MandelbrotStep = 1'b0;
-	if(__iter_iter_D1000) _MandelbrotStep_MandelbrotStep = 1'b1;
+	if(_iter_iter) _MandelbrotStep_MandelbrotStep = 1'b1;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_MandelbrotStep_z_r = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
-	if(__iter_iter_D1000) _MandelbrotStep_z_r = _z_r_old;
+	if(_iter_iter) _MandelbrotStep_z_r = _z_r_old;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_MandelbrotStep_z_i = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
-	if(__iter_iter_D1000) _MandelbrotStep_z_i = _z_i_old;
+	if(_iter_iter) _MandelbrotStep_z_i = _z_i_old;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
@@ -1393,56 +1365,56 @@ always_comb begin
 end
 endmodule
 
-// tuple3 #(T1: type int #(FROM: 0, TO: 64), T2: type int #(FROM: 0, TO: 64), T3: type bool #())
-module tuple3__T1typeint__FROM0_TO64__T2typeint__FROM0_TO64__T3typebool(
+// tuple3 #(T1: type int #(FROM: 0, TO: 1024), T2: type int #(FROM: 0, TO: 1024), T3: type bool #())
+module tuple3__T1typeint__FROM0_TO1024__T2typeint__FROM0_TO1024__T3typebool(
 	input clk,
-	input wire[5:0] v1_i,
-	input wire[5:0] v2_i,
+	input wire[9:0] v1_i,
+	input wire[9:0] v2_i,
 	input wire v3_i,
-	output /*mux_wire*/ logic[12:0] packed_o,
-	input wire[12:0] packed_i,
-	output /*mux_wire*/ logic[5:0] v1_o,
-	output /*mux_wire*/ logic[5:0] v2_o,
+	output /*mux_wire*/ logic[20:0] packed_o,
+	input wire[20:0] packed_i,
+	output /*mux_wire*/ logic[9:0] v1_o,
+	output /*mux_wire*/ logic[9:0] v2_o,
 	output /*mux_wire*/ logic v3_o
 );
 
 genvar _g0;
-/*mux_wire*/ logic[5:0] _transmute_to_bits_value;
-wire[5:0] _transmute_to_bits_bits;
-/*mux_wire*/ logic[5:0] _transmute_to_bits_2_value;
-wire[5:0] _transmute_to_bits_2_bits;
+/*mux_wire*/ logic[9:0] _transmute_to_bits_value;
+wire[9:0] _transmute_to_bits_bits;
+/*mux_wire*/ logic[9:0] _transmute_to_bits_2_value;
+wire[9:0] _transmute_to_bits_2_bits;
 /*mux_wire*/ logic _transmute_to_bits_3_value;
 wire[0:0] _transmute_to_bits_3_bits;
-wire[5:0] _4;
+wire[9:0] _4;
 generate
-for(_g0 = 0; _g0 < 6; _g0 = _g0 + 1) begin
+for(_g0 = 0; _g0 < 10; _g0 = _g0 + 1) begin
 assign _4[_g0] = packed_i[_g0];
 end
 endgenerate
-/*mux_wire*/ logic[5:0] _transmute_from_bits_bits;
-wire[5:0] _transmute_from_bits_value;
-wire[5:0] _5;
+/*mux_wire*/ logic[9:0] _transmute_from_bits_bits;
+wire[9:0] _transmute_from_bits_value;
+wire[9:0] _5;
 generate
-for(_g0 = 0; _g0 < 6; _g0 = _g0 + 1) begin
-assign _5[_g0] = packed_i[6 + _g0];
+for(_g0 = 0; _g0 < 10; _g0 = _g0 + 1) begin
+assign _5[_g0] = packed_i[10 + _g0];
 end
 endgenerate
-/*mux_wire*/ logic[5:0] _transmute_from_bits_2_bits;
-wire[5:0] _transmute_from_bits_2_value;
+/*mux_wire*/ logic[9:0] _transmute_from_bits_2_bits;
+wire[9:0] _transmute_from_bits_2_value;
 wire[0:0] _6;
 generate
 for(_g0 = 0; _g0 < 1; _g0 = _g0 + 1) begin
-assign _6[_g0] = packed_i[12 + _g0];
+assign _6[_g0] = packed_i[20 + _g0];
 end
 endgenerate
 /*mux_wire*/ logic[0:0] _transmute_from_bits_3_bits;
 wire _transmute_from_bits_3_value;
-transmute_to_bits__Ttypeint__FROM0_TO64 transmute_to_bits(
+transmute_to_bits__Ttypeint__FROM0_TO1024 transmute_to_bits(
 	.clk(clk),
 	.value(_transmute_to_bits_value),
 	.bits(_transmute_to_bits_bits)
 );
-transmute_to_bits__Ttypeint__FROM0_TO64 transmute_to_bits_2(
+transmute_to_bits__Ttypeint__FROM0_TO1024 transmute_to_bits_2(
 	.clk(clk),
 	.value(_transmute_to_bits_2_value),
 	.bits(_transmute_to_bits_2_bits)
@@ -1452,12 +1424,12 @@ transmute_to_bits__Ttypebool transmute_to_bits_3(
 	.value(_transmute_to_bits_3_value),
 	.bits(_transmute_to_bits_3_bits)
 );
-transmute_from_bits__Ttypeint__FROM0_TO64 transmute_from_bits(
+transmute_from_bits__Ttypeint__FROM0_TO1024 transmute_from_bits(
 	.clk(clk),
 	.bits(_transmute_from_bits_bits),
 	.value(_transmute_from_bits_value)
 );
-transmute_from_bits__Ttypeint__FROM0_TO64 transmute_from_bits_2(
+transmute_from_bits__Ttypeint__FROM0_TO1024 transmute_from_bits_2(
 	.clk(clk),
 	.bits(_transmute_from_bits_2_bits),
 	.value(_transmute_from_bits_2_value)
@@ -1469,25 +1441,25 @@ transmute_from_bits__Ttypebool transmute_from_bits_3(
 );
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	packed_o = 13'bxxxxxxxxxxxxx;
-	for(int _v0 = 0; _v0 < 6; _v0 = _v0 + 1) begin
+	packed_o = 21'bxxxxxxxxxxxxxxxxxxxxx;
+	for(int _v0 = 0; _v0 < 10; _v0 = _v0 + 1) begin
 packed_o[_v0] = _transmute_to_bits_bits[_v0];
 end
-	for(int _v0 = 0; _v0 < 6; _v0 = _v0 + 1) begin
-packed_o[6 + _v0] = _transmute_to_bits_2_bits[_v0];
+	for(int _v0 = 0; _v0 < 10; _v0 = _v0 + 1) begin
+packed_o[10 + _v0] = _transmute_to_bits_2_bits[_v0];
 end
 	for(int _v0 = 0; _v0 < 1; _v0 = _v0 + 1) begin
-packed_o[12 + _v0] = _transmute_to_bits_3_bits[_v0];
+packed_o[20 + _v0] = _transmute_to_bits_3_bits[_v0];
 end
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_transmute_to_bits_value = 6'dx;
+	_transmute_to_bits_value = 10'dx;
 	_transmute_to_bits_value = v1_i;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_transmute_to_bits_2_value = 6'dx;
+	_transmute_to_bits_2_value = 10'dx;
 	_transmute_to_bits_2_value = v2_i;
 end
 always_comb begin
@@ -1497,12 +1469,12 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	v1_o = 6'dx;
+	v1_o = 10'dx;
 	v1_o = _transmute_from_bits_value;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	v2_o = 6'dx;
+	v2_o = 10'dx;
 	v2_o = _transmute_from_bits_2_value;
 end
 always_comb begin
@@ -1512,12 +1484,12 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_transmute_from_bits_bits = 6'bxxxxxx;
+	_transmute_from_bits_bits = 10'bxxxxxxxxxx;
 	_transmute_from_bits_bits = _4;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_transmute_from_bits_2_bits = 6'bxxxxxx;
+	_transmute_from_bits_2_bits = 10'bxxxxxxxxxx;
 	_transmute_from_bits_2_bits = _5;
 end
 always_comb begin
@@ -1527,15 +1499,15 @@ always_comb begin
 end
 endmodule
 
-// PixelToComplex #(WIDTH: 64, HEIGHT: 64)
-module PixelToComplex__WIDTH64_HEIGHT64(
+// PixelToComplex #(WIDTH: 1024, HEIGHT: 1024)
+module PixelToComplex__WIDTH1024_HEIGHT1024(
 	input clk,
 	input wire PixelToComplex,
 	input wire[31:0] origin_r,
 	input wire[31:0] origin_i,
 	input wire[31:0] step,
-	input wire[5:0] px_x,
-	input wire[5:0] px_y,
+	input wire[9:0] px_x,
+	input wire[9:0] px_y,
 	output /*mux_wire*/ logic[31:0] r,
 	output /*mux_wire*/ logic[31:0] i
 );
@@ -1562,8 +1534,8 @@ module PixelToComplex__WIDTH64_HEIGHT64(
 /*latency*/ logic _PixelToComplex_D20; always_ff @(posedge clk) begin _PixelToComplex_D20 <= _PixelToComplex_D19; end
 /*latency*/ logic _PixelToComplex_D21; always_ff @(posedge clk) begin _PixelToComplex_D21 <= _PixelToComplex_D20; end
 /*latency*/ logic _PixelToComplex_D22; always_ff @(posedge clk) begin _PixelToComplex_D22 <= _PixelToComplex_D21; end
-wire signed[5:0] _4;
-assign _4 = px_x - 6'd32;
+wire signed[9:0] _4;
+assign _4 = px_x - 10'd512;
 /*mux_wire*/ logic _fp_fromint_fp_fromint;
 /*mux_wire*/ logic signed[31:0] _fp_fromint_a;
 wire[31:0] _fp_fromint_result;
@@ -1572,8 +1544,8 @@ wire[31:0] _fp_fromint_result;
 /*mux_wire*/ logic[31:0] _fp_fmadd_b;
 /*mux_wire*/ logic[31:0] _fp_fmadd_c;
 wire[31:0] _fp_fmadd_result;
-wire signed[5:0] _13;
-assign _13 = px_y - 6'd32;
+wire signed[9:0] _13;
+assign _13 = px_y - 10'd512;
 /*mux_wire*/ logic _fp_fromint_2_fp_fromint;
 /*mux_wire*/ logic signed[31:0] _fp_fromint_2_a;
 wire[31:0] _fp_fromint_2_result;
@@ -1686,22 +1658,22 @@ always_comb begin
 end
 endmodule
 
-// tuple2 #(T1: type int #(FROM: 0, TO: 101), T2: type bool #()[13])
-module tuple2__T1typeint__FROM0_TO101__T2typebool____13(
+// tuple2 #(T1: type int #(FROM: 0, TO: 101), T2: type bool #()[21])
+module tuple2__T1typeint__FROM0_TO101__T2typebool____21(
 	input clk,
 	input wire[6:0] v1_i,
-	input wire[12:0] v2_i,
-	output /*mux_wire*/ logic[19:0] packed_o,
-	input wire[19:0] packed_i,
+	input wire[20:0] v2_i,
+	output /*mux_wire*/ logic[27:0] packed_o,
+	input wire[27:0] packed_i,
 	output /*mux_wire*/ logic[6:0] v1_o,
-	output /*mux_wire*/ logic[12:0] v2_o
+	output /*mux_wire*/ logic[20:0] v2_o
 );
 
 genvar _g0;
 /*mux_wire*/ logic[6:0] _transmute_to_bits_value;
 wire[6:0] _transmute_to_bits_bits;
-/*mux_wire*/ logic[12:0] _transmute_to_bits_2_value;
-wire[12:0] _transmute_to_bits_2_bits;
+/*mux_wire*/ logic[20:0] _transmute_to_bits_2_value;
+wire[20:0] _transmute_to_bits_2_bits;
 wire[6:0] _3;
 generate
 for(_g0 = 0; _g0 < 7; _g0 = _g0 + 1) begin
@@ -1710,20 +1682,20 @@ end
 endgenerate
 /*mux_wire*/ logic[6:0] _transmute_from_bits_bits;
 wire[6:0] _transmute_from_bits_value;
-wire[12:0] _4;
+wire[20:0] _4;
 generate
-for(_g0 = 0; _g0 < 13; _g0 = _g0 + 1) begin
+for(_g0 = 0; _g0 < 21; _g0 = _g0 + 1) begin
 assign _4[_g0] = packed_i[7 + _g0];
 end
 endgenerate
-/*mux_wire*/ logic[12:0] _transmute_from_bits_2_bits;
-wire[12:0] _transmute_from_bits_2_value;
+/*mux_wire*/ logic[20:0] _transmute_from_bits_2_bits;
+wire[20:0] _transmute_from_bits_2_value;
 transmute_to_bits__Ttypeint__FROM0_TO101 transmute_to_bits(
 	.clk(clk),
 	.value(_transmute_to_bits_value),
 	.bits(_transmute_to_bits_bits)
 );
-transmute_to_bits__Ttypebool____13 transmute_to_bits_2(
+transmute_to_bits__Ttypebool____21 transmute_to_bits_2(
 	.clk(clk),
 	.value(_transmute_to_bits_2_value),
 	.bits(_transmute_to_bits_2_bits)
@@ -1733,18 +1705,18 @@ transmute_from_bits__Ttypeint__FROM0_TO101 transmute_from_bits(
 	.bits(_transmute_from_bits_bits),
 	.value(_transmute_from_bits_value)
 );
-transmute_from_bits__Ttypebool____13 transmute_from_bits_2(
+transmute_from_bits__Ttypebool____21 transmute_from_bits_2(
 	.clk(clk),
 	.bits(_transmute_from_bits_2_bits),
 	.value(_transmute_from_bits_2_value)
 );
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	packed_o = 20'bxxxxxxxxxxxxxxxxxxxx;
+	packed_o = 28'bxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
 	for(int _v0 = 0; _v0 < 7; _v0 = _v0 + 1) begin
 packed_o[_v0] = _transmute_to_bits_bits[_v0];
 end
-	for(int _v0 = 0; _v0 < 13; _v0 = _v0 + 1) begin
+	for(int _v0 = 0; _v0 < 21; _v0 = _v0 + 1) begin
 packed_o[7 + _v0] = _transmute_to_bits_2_bits[_v0];
 end
 end
@@ -1755,7 +1727,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_transmute_to_bits_2_value = 13'bxxxxxxxxxxxxx;
+	_transmute_to_bits_2_value = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	_transmute_to_bits_2_value = v2_i;
 end
 always_comb begin
@@ -1765,7 +1737,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	v2_o = 13'bxxxxxxxxxxxxx;
+	v2_o = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	v2_o = _transmute_from_bits_2_value;
 end
 always_comb begin
@@ -1775,55 +1747,55 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	_transmute_from_bits_2_bits = 13'bxxxxxxxxxxxxx;
+	_transmute_from_bits_2_bits = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	_transmute_from_bits_2_bits = _4;
 end
 endmodule
 
-// unsafe_int_cast #(FROM_I: 1, TO_I: 65, FROM: 0, TO: 64)
-module unsafe_int_cast__FROM_I1_TO_I65_FROM0_TO64(
+// unsafe_int_cast #(FROM_I: 1, TO_I: 1025, FROM: 0, TO: 1024)
+module unsafe_int_cast__FROM_I1_TO_I1025_FROM0_TO1024(
 	input clk,
-	input wire[6:0] in,
-	output /*mux_wire*/ logic[5:0] out
+	input wire[10:0] in,
+	output /*mux_wire*/ logic[9:0] out
 );
 
 	assign out = in;
 endmodule
 
-// RawFIFO #(WIDTH: 20, DEPTH: 64, MAY_PUSH_LATENCY: 22, EXTRA_IN_FLIGHT: 2, READ_DATA_LATENCY: 0)
+// RawFIFO #(WIDTH: 28, DEPTH: 64, MAY_PUSH_LATENCY: 22, EXTRA_IN_FLIGHT: 2, READ_DATA_LATENCY: 0)
 // Provided externally
-// module RawFIFO__WIDTH20_DEPTH64_MAY_PUSH_LATENCY22_EXTRA_IN_FLIGHT2_READ_DATA_LATENCY0(
+// module RawFIFO__WIDTH28_DEPTH64_MAY_PUSH_LATENCY22_EXTRA_IN_FLIGHT2_READ_DATA_LATENCY0(
 // 	input clk,
 // 	input wire rst,
 // 	output /*mux_wire*/ logic may_push,
 // 	input wire push,
-// 	input wire[19:0] push_data,
+// 	input wire[27:0] push_data,
 // 	output /*mux_wire*/ logic may_pop,
 // 	input wire pop,
-// 	output /*mux_wire*/ logic[19:0] pop_data
+// 	output /*mux_wire*/ logic[27:0] pop_data
 // );
-// transmute_to_bits #(T: type bool #()[20])
-module transmute_to_bits__Ttypebool____20(
+// transmute_to_bits #(T: type bool #()[28])
+module transmute_to_bits__Ttypebool____28(
 	input clk,
-	input wire[19:0] value,
-	output /*mux_wire*/ logic[19:0] bits
+	input wire[27:0] value,
+	output /*mux_wire*/ logic[27:0] bits
 );
 
 assign bits = value;
 endmodule
 
-// transmute_from_bits #(T: type bool #()[20])
-module transmute_from_bits__Ttypebool____20(
+// transmute_from_bits #(T: type bool #()[28])
+module transmute_from_bits__Ttypebool____28(
 	input clk,
-	input wire[19:0] bits,
-	output /*mux_wire*/ logic[19:0] value
+	input wire[27:0] bits,
+	output /*mux_wire*/ logic[27:0] value
 );
 
 assign value = bits;
 endmodule
 
-// SlowIterator2 #(InitialT: type float #()[2], ResultT: type int #(FROM: 0, TO: 101), ExtraDataT: type bool #()[13], COMPUTATION_LATENCY: 55, REQUEST_DATA_LATENCY: 22)
-module SlowIterator2__InitialTtypefloat____2__ResultTtypeint__FROM0_TO101__ExtraDataTtypebool____13__COMPUTATION_LATENCY55_REQUEST_DATA_LATENCY22(
+// SlowIterator2 #(InitialT: type float #()[2], ResultT: type int #(FROM: 0, TO: 101), ExtraDataT: type bool #()[21], COMPUTATION_LATENCY: 51, REQUEST_DATA_LATENCY: 22)
+module SlowIterator2__InitialTtypefloat____2__ResultTtypeint__FROM0_TO101__ExtraDataTtypebool____21__COMPUTATION_LATENCY51_REQUEST_DATA_LATENCY22(
 	input clk,
 	input wire rst,
 	output /*mux_wire*/ logic iter,
@@ -1835,10 +1807,10 @@ module SlowIterator2__InitialTtypefloat____2__ResultTtypeint__FROM0_TO101__Extra
 	output /*mux_wire*/ logic may_start,
 	input wire start,
 	input wire[31:0] initial_data_2[1:0],
-	input wire[12:0] extra_data,
+	input wire[20:0] extra_data,
 	output /*mux_wire*/ logic finish,
 	output /*mux_wire*/ logic[6:0] result_data,
-	output /*mux_wire*/ logic[12:0] extra_result_data
+	output /*mux_wire*/ logic[20:0] extra_result_data
 );
 
 /*latency*/ logic _iter_D1; always_ff @(posedge clk) begin _iter_D1 <= iter; end
@@ -1892,10 +1864,6 @@ module SlowIterator2__InitialTtypefloat____2__ResultTtypeint__FROM0_TO101__Extra
 /*latency*/ logic _iter_D49; always_ff @(posedge clk) begin _iter_D49 <= _iter_D48; end
 /*latency*/ logic _iter_D50; always_ff @(posedge clk) begin _iter_D50 <= _iter_D49; end
 /*latency*/ logic _iter_D51; always_ff @(posedge clk) begin _iter_D51 <= _iter_D50; end
-/*latency*/ logic _iter_D52; always_ff @(posedge clk) begin _iter_D52 <= _iter_D51; end
-/*latency*/ logic _iter_D53; always_ff @(posedge clk) begin _iter_D53 <= _iter_D52; end
-/*latency*/ logic _iter_D54; always_ff @(posedge clk) begin _iter_D54 <= _iter_D53; end
-/*latency*/ logic _iter_D55; always_ff @(posedge clk) begin _iter_D55 <= _iter_D54; end
 /*latency*/ logic _may_start_D1; always_ff @(posedge clk) begin _may_start_D1 <= may_start; end
 /*latency*/ logic _may_start_D2; always_ff @(posedge clk) begin _may_start_D2 <= _may_start_D1; end
 /*latency*/ logic _may_start_D3; always_ff @(posedge clk) begin _may_start_D3 <= _may_start_D2; end
@@ -1927,7 +1895,7 @@ wire _LatencyOffset_out;
 wire _iter_with_initial_data_out;
 wire[31:0] _iter_with_initial_data_data_out[1:0];
 /*mux_wire*/ logic[31:0] initial_data_cross[1:0];
-/*state*/ logic[12:0] extra_data_stored;
+/*state*/ logic[20:0] extra_data_stored;
 /*mux_wire*/ logic retry_loop;
 /*mux_wire*/ logic _iter_with_initial_data_in;
 /*mux_wire*/ logic[31:0] _iter_with_initial_data_data_in[1:0];
@@ -2004,7 +1972,7 @@ CrossAction__Ttypefloat____2 iter_with_initial_data(
 	.out(_iter_with_initial_data_out),
 	.data_out(_iter_with_initial_data_data_out)
 );
-LatencyOffset__Ttypebool____OFFSET_55 LatencyOffset(
+LatencyOffset__Ttypebool____OFFSET_51 LatencyOffset(
 	.clk(clk),
 	.in(_LatencyOffset_in),
 	.out(_LatencyOffset_out)
@@ -2024,7 +1992,7 @@ always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	iter_continue = 1'bx;
 	iter_continue = 1'b0;
-	if(_iter_D55) if(!done) iter_continue = 1'b1;
+	if(_iter_D51) if(!done) iter_continue = 1'b1;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
@@ -2043,12 +2011,12 @@ always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_iter_is_finished_in = 1'bx;
 	_iter_is_finished_in = 1'b0;
-	if(_iter_D55) if(done) _iter_is_finished_in = 1'b1;
+	if(_iter_D51) if(done) _iter_is_finished_in = 1'b1;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
 	_iter_is_finished_data_in = 7'dx;
-	if(_iter_D55) if(done) _iter_is_finished_data_in = result;
+	if(_iter_D51) if(done) _iter_is_finished_data_in = result;
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
@@ -2117,7 +2085,7 @@ always_comb begin
 end
 always_comb begin
 	// Combinatorial wires are not defined when not valid. This is just so that the synthesis tool doesn't generate latches
-	extra_result_data = 13'bxxxxxxxxxxxxx;
+	extra_result_data = 21'bxxxxxxxxxxxxxxxxxxxxx;
 	if(!__rst_act_out_D22) if(__iter_is_finished_out_D22) extra_result_data = extra_data_stored;
 end
 always_ff @(posedge clk) begin
@@ -2141,8 +2109,8 @@ always_comb begin
 end
 endmodule
 
-// SlowIteratorState #(T: type float #(), MAX_LATENCY: 56, LATENCY: 30)
-module SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY30(
+// SlowIteratorState #(T: type float #(), MAX_LATENCY: 52, LATENCY: 30)
+module SlowIteratorState__Ttypefloat____MAX_LATENCY52_LATENCY30(
 	input clk,
 	input wire link,
 	input wire[5:0] _sentinel,
@@ -2212,8 +2180,8 @@ always_comb begin
 end
 endmodule
 
-// SlowIteratorState #(T: type float #(), MAX_LATENCY: 56, LATENCY: 0)
-module SlowIteratorState__Ttypefloat____MAX_LATENCY56_LATENCY0(
+// SlowIteratorState #(T: type float #(), MAX_LATENCY: 52, LATENCY: 0)
+module SlowIteratorState__Ttypefloat____MAX_LATENCY52_LATENCY0(
 	input clk,
 	input wire link,
 	input wire[5:0] _sentinel,
@@ -2253,8 +2221,8 @@ always_comb begin
 end
 endmodule
 
-// SlowIteratorState #(T: type int #(FROM: 0, TO: 100), MAX_LATENCY: 56, LATENCY: 0)
-module SlowIteratorState__Ttypeint__FROM0_TO100__MAX_LATENCY56_LATENCY0(
+// SlowIteratorState #(T: type int #(FROM: 0, TO: 100), MAX_LATENCY: 52, LATENCY: 0)
+module SlowIteratorState__Ttypeint__FROM0_TO100__MAX_LATENCY52_LATENCY0(
 	input clk,
 	input wire link,
 	input wire[5:0] _sentinel,
@@ -2824,11 +2792,11 @@ module unsafe_int_cast__FROM_I1_TO_I101_FROM0_TO100(
 	assign out = in;
 endmodule
 
-// transmute_to_bits #(T: type int #(FROM: 0, TO: 64))
-module transmute_to_bits__Ttypeint__FROM0_TO64(
+// transmute_to_bits #(T: type int #(FROM: 0, TO: 1024))
+module transmute_to_bits__Ttypeint__FROM0_TO1024(
 	input clk,
-	input wire[5:0] value,
-	output /*mux_wire*/ logic[5:0] bits
+	input wire[9:0] value,
+	output /*mux_wire*/ logic[9:0] bits
 );
 
 assign bits = value;
@@ -2844,11 +2812,11 @@ module transmute_to_bits__Ttypebool(
 assign bits = value;
 endmodule
 
-// transmute_from_bits #(T: type int #(FROM: 0, TO: 64))
-module transmute_from_bits__Ttypeint__FROM0_TO64(
+// transmute_from_bits #(T: type int #(FROM: 0, TO: 1024))
+module transmute_from_bits__Ttypeint__FROM0_TO1024(
 	input clk,
-	input wire[5:0] bits,
-	output /*mux_wire*/ logic[5:0] value
+	input wire[9:0] bits,
+	output /*mux_wire*/ logic[9:0] value
 );
 
 assign value = bits;
@@ -2965,11 +2933,11 @@ module transmute_to_bits__Ttypeint__FROM0_TO101(
 assign bits = value;
 endmodule
 
-// transmute_to_bits #(T: type bool #()[13])
-module transmute_to_bits__Ttypebool____13(
+// transmute_to_bits #(T: type bool #()[21])
+module transmute_to_bits__Ttypebool____21(
 	input clk,
-	input wire[12:0] value,
-	output /*mux_wire*/ logic[12:0] bits
+	input wire[20:0] value,
+	output /*mux_wire*/ logic[20:0] bits
 );
 
 assign bits = value;
@@ -2985,11 +2953,11 @@ module transmute_from_bits__Ttypeint__FROM0_TO101(
 assign value = bits;
 endmodule
 
-// transmute_from_bits #(T: type bool #()[13])
-module transmute_from_bits__Ttypebool____13(
+// transmute_from_bits #(T: type bool #()[21])
+module transmute_from_bits__Ttypebool____21(
 	input clk,
-	input wire[12:0] bits,
-	output /*mux_wire*/ logic[12:0] value
+	input wire[20:0] bits,
+	output /*mux_wire*/ logic[20:0] value
 );
 
 assign value = bits;
@@ -3121,8 +3089,8 @@ end
 end
 endmodule
 
-// LatencyOffset #(T: type bool #(), OFFSET: -55)
-module LatencyOffset__Ttypebool____OFFSET_55(
+// LatencyOffset #(T: type bool #(), OFFSET: -51)
+module LatencyOffset__Ttypebool____OFFSET_51(
 	input clk,
 	input wire in,
 	output /*mux_wire*/ logic out
