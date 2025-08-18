@@ -450,3 +450,192 @@ module WholeMandelbrotComputer {
         outputFIFO.push(data.pack(iter_count, extra_data))
     }
 }
+
+/// The order in which results arrive is not the same as the order of inputs, due to some taking more cycles to execute. 
+module ParallelWhile #(InitialT, ResultT, ExtraDataT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
+    domain clk
+
+    CrossActionNoData rst_act
+    action rst {
+        rst_act.in()
+    }
+
+    domain iter_domain
+    gen int TOTAL_CYCLES = COMPUTATION_LATENCY + REQUEST_DATA_LATENCY
+    bool[TOTAL_CYCLES] valid_slots
+    ExtraDataT[TOTAL_CYCLES] extra_data_slots
+    state int#(FROM: 0, TO: TOTAL_CYCLES) cur_iter_st
+    initial cur_iter_st = 0
+
+    trigger finish'0 : ResultT result_data'0, ExtraDataT extra_result_data'REQUEST_DATA_LATENCY
+
+    // Increment by one every cycle, no matter if we're processing or not
+    cur_iter_st = (cur_iter_st + 1) % TOTAL_CYCLES
+    trigger iter'0 : int #(FROM: 0, TO: noinfer#(V: TOTAL_CYCLES)) cur_iter'0 {
+        action done'COMPUTATION_LATENCY: ResultT result'COMPUTATION_LATENCY {
+            finish(result, extra_data_slots[cur_iter_st])
+        }
+    }
+    trigger is_initial'0: InitialT initial_data'0
+
+    trigger may_start'-REQUEST_DATA_LATENCY {
+        action start'0 : InitialT initial_data'0, ExtraDataT extra_data'0 {
+            iter(cur_iter_st)
+            is_initial(initial_data)
+            extra_data_slots[cur_iter_st] = extra_data
+            valid_slots[cur_iter_st] = true
+        } else when valid_slots[cur_iter_st] {
+            iter(cur_iter_st)
+        } else {
+            valid_slots[cur_iter_st] = false
+        }
+        // Reset, overwrite valid_slots completely
+        when rst_act.out {
+            valid_slots[cur_iter_st] = false
+        }
+    }
+}
+
+module ParallelWhileState #(T, int NUM_PARALLEL_STATES, int LATENCY) {
+    assert #(C: LATENCY <= NUM_PARALLEL_STATES)
+    assert #(C: LATENCY >= 0)
+
+    state T[NUM_PARALLEL_STATES] st
+
+    action link'0 : int#(FROM: 0, TO: NUM_PARALLEL_STATES) cur_iter_id'0 {
+        output T old'0
+        input T new'LATENCY
+
+        action init'0 : T initial_data'0 {
+            old = initial_data
+        } else {
+            old = LatencyOffset#(OFFSET: -LATENCY)(st[cur_iter_id])
+        }
+
+        st[cur_iter_id] = new
+    }
+}
+
+module MandelbrotParallelWhile #(ExtraDataT, int INPUT_DATA_LATENCY) {
+    gen int MAX_ITERATION = 100
+
+    SlowIterator2 iter
+
+    domain clk
+    action rst'0 {
+        iter.rst()
+    }
+    
+    trigger may_start'-INPUT_DATA_LATENCY
+    when iter.may_start {
+        may_start()
+    }
+    action start'0 : float r'0, float i'0, ExtraDataT extra_data'0 {
+        iter.start([r, i], extra_data)
+    }
+
+    trigger finish'0: int iteration_count'0, ExtraDataT extra_data'0
+    when iter.finish: int iteration_count, ExtraDataT extra_data {
+        finish(iteration_count, extra_data)
+    }
+
+    ParallelWhileState #(T: type float) z_r
+    ParallelWhileState #(T: type float) z_i
+    ParallelWhileState #(T: type float) c_r
+    ParallelWhileState #(T: type float) c_i
+    ParallelWhileState #(T: type int #(FROM: 0, TO: MAX_ITERATION)) iteration
+    
+    float zero = fp_fromint(0)
+    when iter.iter : int sentinel {
+        z_r.link(sentinel)
+        z_i.link(sentinel)
+        c_r.link(sentinel)
+        c_i.link(sentinel)
+        iteration.link(sentinel)
+        
+        when iter.is_initial : float[2] init_data {
+            z_r.init(zero)
+            z_i.init(zero)
+            c_r.init(init_data[0])
+            c_i.init(init_data[1])
+            iteration.init(0)
+        }
+
+        z_r.new, z_i.new, bool is_done = MandelbrotStep(z_r.old, z_i.old, c_r.old, c_i.old)
+        c_r.new = c_r.old
+        c_i.new = c_i.old
+        iteration.new = unsafe_int_cast#(FROM: 0, TO: MAX_ITERATION)(iteration.old + 1)
+
+        when is_done {
+            iter.done(iteration.old)
+        } else when iteration.old == MAX_ITERATION - 1 {
+            iter.done(MAX_ITERATION)
+        }
+    }
+}
+
+module WholeMandelbrotComputerFast {
+    gen int WIDTH = 1024
+    gen int HEIGHT = 1024
+    
+    ScreenIterator #(WIDTH, HEIGHT) pixel_producer
+    SameCycleReadFIFO #(DEPTH: 64, EXTRA_IN_FLIGHT: 2) outputFIFO
+    MandelbrotParallelWhile mandel_iter
+    
+    action rst {
+        pixel_producer.rst()
+        mandel_iter.rst()
+        outputFIFO.rst()
+    }
+
+    state float origin_r_st
+    state float origin_i_st
+    state float scale_st
+    //state int#(FROM: 0, TO: pow2#(E: 32)) width_st
+    //state int#(FROM: 0, TO: pow2#(E: 32)) height_st
+    
+    bool may_startt = pixel_producer.may_start
+    output bool may_start = may_startt
+    action set_reg'6 : int#(FROM:0, TO: 5) id'6, float value'6 {
+        when id == 0 {
+            pixel_producer.start()
+        } else when id == 2 {
+            origin_r_st = value
+        } else when id == 3 {
+            origin_i_st = value
+        } else when id == 4 {
+            scale_st = value
+        }/* else when id == 5 {
+            width_st = transmute#(T2: type int#(FROM: 0, TO: pow2#(E: 32))) (value)
+        } else when id == 6 {
+            height_st = transmute#(T2: type int#(FROM: 0, TO: pow2#(E: 32))) (value)
+        }*/
+    }
+
+    tuple3 mandel_iter_extra_data
+    when pixel_producer.may_next & outputFIFO.may_push {
+        when mandel_iter.may_start {
+            int x, int y = pixel_producer.next()
+
+            float r, float i = PixelToComplex(origin_r_st, origin_i_st, scale_st, x, y)
+
+            mandel_iter.start(r, i, mandel_iter_extra_data.pack(x, y, pixel_producer.last))
+        }
+    }
+
+    tuple2 data
+    trigger may_read_px'0 {
+        action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:32)) iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr, bool done'0 {
+            iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT) + 1] extra_data = data.unpack(outputFIFO.pop())
+            int x, int y, done = mandel_iter_extra_data.unpack(extra_data)
+            addr = y * WIDTH + x
+        }
+    }
+    when outputFIFO.may_pop {
+        may_read_px()
+    }
+
+    when mandel_iter.finish : int iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT) + 1] extra_data {
+        outputFIFO.push(data.pack(iter_count, extra_data))
+    }
+}
