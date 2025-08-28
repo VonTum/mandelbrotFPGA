@@ -399,30 +399,22 @@ module WholeMandelbrotComputer {
     SameCycleReadFIFO #(DEPTH: 64, EXTRA_IN_FLIGHT: 2) outputFIFO
     MandelbrotSlowIter2 mandel_iter
     
-    action rst {
+    action rst'0 {
         pixel_producer.rst()
         mandel_iter.rst()
         outputFIFO.rst()
     }
 
-    state float origin_r_st
-    state float origin_i_st
-    state float scale_st
-    
-    bool may_startt = pixel_producer.may_start
-    output bool may_start = may_startt
-    action set_reg'6 : int#(FROM:0, TO: 5) id'6, float value'6 {
-        when id == 0 {
-            pixel_producer.start()
-        } else when id == 2 {
-            origin_r_st = value
-        } else when id == 3 {
-            origin_i_st = value
-        } else when id == 4 {
-            scale_st = value
-        }
-    }
 
+    input float origin_r_st
+    input float origin_i_st
+    input float scale_st
+
+    output bool may_start = pixel_producer.may_start
+    action start {
+        pixel_producer.start()
+    }
+    
     tuple3 mandel_iter_extra_data
     when pixel_producer.may_next & outputFIFO.may_push {
         when mandel_iter.may_start {
@@ -436,7 +428,7 @@ module WholeMandelbrotComputer {
 
     tuple2 data
     trigger may_read_px'0 {
-        action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:32)) iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr, bool done'0 {
+        action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:32)) iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr'0, bool done'0 {
             iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT) + 1] extra_data = data.unpack(outputFIFO.pop())
             int x, int y, done = mandel_iter_extra_data.unpack(extra_data)
             addr = y * WIDTH + x
@@ -479,9 +471,9 @@ module ParallelWhile #(InitialT, ResultT, ExtraDataT, int COMPUTATION_LATENCY, i
     trigger is_initial'0: InitialT initial_data'0
 
     trigger may_start'-REQUEST_DATA_LATENCY {
-        action start'0 : InitialT initial_data'0, ExtraDataT extra_data'0 {
+        action start'0 : InitialT initial_data_in'0, ExtraDataT extra_data'0 {
             iter(cur_iter_st)
-            is_initial(initial_data)
+            is_initial(initial_data_in)
             extra_data_slots[cur_iter_st] = extra_data
             valid_slots[cur_iter_st] = true
         } else when valid_slots[cur_iter_st] {
@@ -534,7 +526,7 @@ module MandelbrotParallelWhile #(ExtraDataT, int INPUT_DATA_LATENCY) {
         iter.start([r, i], extra_data)
     }
 
-    trigger finish'0: int iteration_count'0, ExtraDataT extra_data'0
+    trigger finish'0: int iteration_count'0, ExtraDataT extra_data_o'0
     when iter.finish: int iteration_count, ExtraDataT extra_data {
         finish(iteration_count, extra_data)
     }
@@ -625,7 +617,7 @@ module WholeMandelbrotComputerFast {
 
     tuple2 data
     trigger may_read_px'0 {
-        action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:32)) iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr, bool done'0 {
+        action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:32)) iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr'0, bool done'0 {
             iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT) + 1] extra_data = data.unpack(outputFIFO.pop())
             int x, int y, done = mandel_iter_extra_data.unpack(extra_data)
             addr = y * WIDTH + x
@@ -638,4 +630,264 @@ module WholeMandelbrotComputerFast {
     when mandel_iter.finish : int iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT) + 1] extra_data {
         outputFIFO.push(data.pack(iter_count, extra_data))
     }
+}
+
+module WholeMandelbrotComputerDummy {
+    action rst'0 {
+    }
+
+    input float origin_r_st'0
+    input float origin_i_st'0
+    input float scale_st'0
+
+    state bool running'0
+    initial running = false
+
+    state int#(FROM: 0, TO: pow2#(E:32)) addr'0
+    state int#(FROM: 0, TO: pow2#(E:16)) data'0
+    state int#(FROM: 0, TO: pow2#(E:4)) wait'0
+    initial addr = 0
+    initial data = 0
+    initial wait = 0
+
+    output bool may_start = !running
+    action start'0 {
+        running = true
+        wait = 1
+    }
+
+    trigger may_read_px'0 {
+        action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:16)) _data'0, int#(FROM: 0, TO: pow2#(E: 32)) _addr'0, bool _done'0 {
+            _addr = addr
+            _data = data
+            _done = addr == 100
+            data = unsafe_int_cast#(FROM: 0, TO: pow2#(E:16))(data + 2)
+            addr = unsafe_int_cast#(FROM: 0, TO: pow2#(E:32))(addr + 1)
+            when addr != 100 {
+                wait = 1
+            }
+        }
+    }
+    when wait != 0 {
+        wait = unsafe_int_cast#(FROM: 0, TO: pow2#(E:4))(wait + 1)
+    } else {
+        may_read_px()
+    }
+}
+
+module TapascoTop {
+    gen int NUM_REGS = 3
+    gen int ADDR_WIDTH = 32
+    gen int DATA_WIDTH = 32
+    
+    WholeMandelbrotComputerDummy acc
+    Axi4LiteSlave slave
+
+    //domain clk
+    input bool nreset'0
+    when !nreset {
+        acc.rst()
+    }
+    trigger intr'0
+
+    //output bool ctrl_arready'0 = slave.arready
+    output bool ctrl_arready'0 = slave.arready
+    input bool ctrl_arvalid'0
+    slave.arvalid = ctrl_arvalid
+    input int #(FROM: 0, TO: pow2#(E: 32)) ctrl_araddr'0
+    slave.araddr = ctrl_araddr
+    input bool [3] ctrl_arprot'0
+    slave.arprot = ctrl_arprot
+
+    input bool ctrl_rready
+    slave.rready = ctrl_rready
+    output bool ctrl_rvalid = slave.rvalid
+    output bool[32] ctrl_rdata = slave.rdata
+    output bool[2] ctrl_rresp = slave.rresp
+    output bool ctrl_awready = slave.awready
+    input bool ctrl_awvalid
+    slave.awvalid = ctrl_awvalid
+    input int #(FROM: 0, TO: pow2#(E: 32)) ctrl_awaddr
+    slave.awaddr = ctrl_awaddr
+    input bool[2] ctrl_awprot
+    slave.awprot = ctrl_awprot
+    output bool ctrl_wready = slave.wready
+    input bool ctrl_wvalid
+    slave.wvalid = ctrl_wvalid
+    input bool[32] ctrl_wdata
+    slave.wdata = ctrl_wdata
+    input bool[4] ctrl_wstrb
+    slave.wstrb = ctrl_wstrb
+    input bool ctrl_bready
+    slave.bready = ctrl_bready
+    output bool ctrl_bvalid = slave.bvalid
+    output bool[2] ctrl_bresp = slave.bresp
+
+
+    state bool [32] register0
+    state bool [32] register1
+    state bool [32] register2
+
+    //domain aw_domain
+    Axi4Master #(ADDR_WIDTH, DATA_WIDTH) mem
+    input bool mem_awready
+    mem.awready = mem_awready
+    output bool mem_awvalid = mem.awvalid
+    output int #(FROM: 0, TO: pow2#(E: ADDR_WIDTH)) mem_awaddr = mem.awaddr
+    output bool [8] mem_awlen = mem.awlen
+    output bool [3] mem_awsize = mem.awsize
+    output bool [2] mem_awburst = mem.awburst
+    output bool mem_awlock = mem.awlock
+    output bool [4] mem_awcache = mem.awcache
+    output bool [3] mem_awprot = mem.awprot
+    output bool [4] mem_awqos = mem.awqos
+    output bool [4] mem_awregion = mem.awregion
+    //output bool [USER_WIDTH] awuser
+    //output bool [ID_WIDTH] awid
+
+    //domain w_domain
+    input bool mem_wready
+    mem.wready = mem_wready
+    output bool mem_wvalid = mem.wvalid
+    output bool [DATA_WIDTH] mem_wdata = mem.wdata
+    output bool [DATA_WIDTH/8] mem_wstrb = mem.wstrb
+    output bool mem_wlast = mem.wlast
+
+    //domain b_domain
+    output bool mem_bready'0 = mem.bready
+    input bool mem_bvalid'0
+    mem.bvalid = mem_bvalid
+    input bool [2] mem_bresp'0
+    mem.bresp = mem_bresp
+
+
+    // User code
+
+    // Accessing ports
+    state bool [32] return_value
+    state bool return_valid
+
+    initial return_valid = false
+    when !nreset {
+        return_valid = false
+    }
+
+    when !return_valid {
+        slave.read_request()
+    }
+    when return_valid {
+        slave.read_response(return_value)
+        when slave.read_response_fire {
+            return_valid = false
+        }
+    }
+    when slave.read_request_fire : int _addr {
+        when _addr == 0 {
+            return_value = Repeat(false)
+        } else when _addr == 16 {
+            return_value = Repeat(false)
+        } else when _addr == 32 {
+            return_value = register0
+        } else when _addr == 48 {
+            return_value = register1
+        } else {
+            return_value = register2
+        }
+        return_valid = true
+    }
+
+    state int write_addr
+    state bool write_addr_valid
+    state bool write_resp_valid
+
+    slave.write_addr_request()
+    when slave.write_addr_request_fire : int _addr {
+        write_addr = _addr / 16
+        write_addr_valid = true
+    }
+
+    when write_addr_valid & !write_resp_valid {
+        slave.write_data_request()
+        when slave.write_data_request_fire : bool [32] _data, bool[4] _strb {
+            when write_addr == 0 {
+                when _data[0] {
+                    acc.start()
+                }
+            } else {
+                bool[32] tmp = register0
+                when write_addr == 48 {
+                    tmp = register1
+                } else when write_addr == 64 {
+                    tmp = register2
+                }
+
+                for int i in 0..4 {
+                    when _strb[i] {
+                        tmp[i*8+:8] = _data[i*8+:8]
+                    }
+                }
+
+                when write_addr == 32 {
+                    register0 = tmp
+                } else when write_addr == 48 {
+                    register1 = tmp
+                } else when write_addr == 64 {
+                    register2 = tmp
+                }
+            }
+
+            write_addr_valid = false
+            write_resp_valid = true
+        }
+    }
+
+    when write_resp_valid {
+        slave.write_response()
+        when slave.write_response_fire {
+            write_resp_valid = false
+        }
+    }
+
+    acc.origin_r_st = transmute_from_bits(register0)
+    acc.origin_i_st = transmute_from_bits(register1)
+    acc.scale_st = transmute_from_bits(register2)
+
+    // Memory Access
+    state int mem_addr 
+    state bool[DATA_WIDTH] mem_data 
+    state bool mem_addr_valid
+    state bool mem_data_valid
+    initial mem_addr_valid = false
+    initial mem_data_valid = false
+
+    when !mem_data_valid & !mem_addr_valid {
+        when acc.may_read_px {
+            int addr, int data, bool done = acc.read_px()
+            mem_data = transmute_to_bits(data)
+            mem_addr = addr
+            mem_addr_valid = true
+            mem_data_valid = true
+            when done {
+                intr()
+            }
+        }
+    }
+    
+    when mem_addr_valid {
+        mem.write_addr_request(mem_addr * 4)
+        when mem.write_addr_request_fire {
+            mem_addr_valid = false
+        }
+    }
+
+    when mem_data_valid {
+        mem.write_data_request(mem_data)
+        when mem.write_data_request_fire {
+            mem_data_valid = false
+        }
+    }
+
+    mem.write_response()
+    when mem.write_response_fire {}
+
 }

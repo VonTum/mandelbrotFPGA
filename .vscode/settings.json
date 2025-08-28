@@ -7,8 +7,6 @@
     "--lsp",
     // Tracking down slow compilations
     "--kill-timeout", "2.0",
-    "/home/lennart/Desktop/sus-compiler/platform/xilinx/xpm.sus",
-    "/home/lennart/Desktop/Projects/mandelbrotFPGA/float.sus", "/home/lennart/Desktop/Projects/mandelbrotFPGA/mandelbrot.sus",
     //, "--upto", "typecheck"
   ],
   "editor.lineHeight": 0,

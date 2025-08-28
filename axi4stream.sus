@@ -1,0 +1,60 @@
+
+module Axi4StreamSlave #(T) {
+    output bool ready
+    input bool valid
+    input T data
+    input bool last
+
+    action is_ready {
+        ready = true
+
+        trigger fire : T data_out, bool last_out
+
+        when valid {
+            fire(data, last)
+        }
+    } else {
+        ready = false
+    }
+}
+
+module Axi4StreamMaster #(T) {
+    input bool ready
+    output bool valid
+    output T data
+    output bool last
+
+    action pkg : T _data, bool _last {
+        valid = true
+        data = _data
+        last = _last
+
+        trigger fire
+
+        when ready {
+            fire()
+        }
+
+    } else {
+        valid = false
+    }
+}
+
+module Example {
+    Axi4StreamSlave slave
+    Axi4StreamMaster master
+    master.ready = slave.ready
+    slave.valid = master.valid
+    slave.data = master.data
+    slave.last = master.last
+
+    master.pkg(0, false)
+    when master.fire {
+
+    }
+
+    slave.is_ready()
+    when slave.fire : int d, bool last {
+
+    }
+}

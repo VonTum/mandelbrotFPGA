@@ -1,0 +1,155 @@
+
+module Axi4LiteSlave {
+    domain ar_stream
+    output bool arready'0
+    input bool arvalid'0
+    input int #(FROM: 0, TO: pow2#(E: 32)) araddr'0
+    input bool [3] arprot'0
+
+    action read_request'0 {
+        arready = true
+
+        trigger read_request_fire'0 : int #(FROM: 0, TO: pow2#(E: 32)) addr'0
+
+        when arvalid {
+            read_request_fire(araddr)
+        }
+    } else {
+        arready = false
+    }
+
+    domain r_stream
+    input bool rready
+    output bool rvalid
+    output bool [32] rdata
+    output bool [2] rresp
+
+    action read_response : bool [32] _data {
+        rvalid = true
+        rdata = _data
+        rresp = [false, false]
+
+        trigger read_response_fire
+
+        when rready {
+            read_response_fire()
+        }
+
+    } else {
+        rvalid = false
+    }
+
+    domain aw_stream
+    output bool awready'0
+    input bool awvalid'0
+    input int #(FROM: 0, TO: pow2#(E: 32)) awaddr'0
+    input bool [2] awprot'0
+
+    action write_addr_request'0 {
+        awready = true
+
+        trigger write_addr_request_fire'0 : int #(FROM: 0, TO: pow2#(E: 32)) wr_addr'0
+
+        when awvalid {
+            write_addr_request_fire(awaddr)
+        }
+    } else {
+        awready = false
+    }
+
+    domain w_stream
+    output bool wready
+    input bool wvalid
+    input bool [32] wdata
+    input bool [4] wstrb
+
+    action write_data_request'0 {
+        wready = true
+
+        trigger write_data_request_fire'0 : bool [32] data'0, bool [4] strb'0
+
+        when wvalid {
+            write_data_request_fire(wdata, wstrb)
+        }
+    } else {
+        wready = false
+    }
+
+    domain b_stream
+    input bool bready
+    output bool bvalid
+    output bool [2] bresp
+
+    action write_response {
+        bvalid = true
+        bresp = [false, false]
+
+        trigger write_response_fire
+
+        when bready {
+            write_response_fire()
+        }
+
+    } else {
+        bvalid = false
+    }
+}
+
+module RegisterAxi4LiteSlave #(int NUM_REGS) {
+    Axi4LiteSlave slave
+
+    output state bool [32] [NUM_REGS] registers
+    state bool [32] return_value
+    state bool return_valid
+
+    when !return_valid {
+        slave.read_request()
+    }
+    when slave.read_response_fire {
+        slave.read_request()
+    }
+    when slave.read_request_fire : int _addr {
+        return_value = registers[_addr % NUM_REGS]
+        return_valid = true
+    }
+
+    when return_valid {
+        slave.read_response(return_value)
+        when slave.read_response_fire {
+            return_valid = false
+        }
+    }
+
+    state int write_addr
+    state bool write_addr_valid
+    state bool write_resp_valid
+
+    slave.write_addr_request()
+    when slave.write_addr_request_fire : int _addr {
+        write_addr = _addr
+        write_addr_valid = true
+    }
+
+    when write_addr_valid & !write_resp_valid {
+        slave.write_data_request()
+        when slave.write_data_request_fire : bool [32] _data, bool[4] _strb {
+            bool[32] tmp = registers[write_addr % NUM_REGS]
+
+            for int i in 0..4 {
+                when _strb[i] {
+                    tmp[i*8+:8] = _data[i*8+:8]
+                }
+            }
+            registers[write_addr % NUM_REGS] = tmp
+            write_addr_valid = false
+            write_resp_valid = true
+        }
+    }
+
+    when write_resp_valid {
+        slave.write_response()
+        when slave.write_response_fire {
+            write_resp_valid = false
+        }
+    }
+}

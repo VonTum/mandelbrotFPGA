@@ -1,0 +1,85 @@
+
+module Axi4Master #(int ADDR_WIDTH, int DATA_WIDTH) {
+    domain aw_domain
+    input bool awready
+    output bool awvalid
+    output int #(FROM: 0, TO: pow2#(E: ADDR_WIDTH)) awaddr
+    output bool [8] awlen
+    output bool [3] awsize
+    output bool [2] awburst
+    output bool awlock
+    output bool [4] awcache
+    output bool [3] awprot
+    output bool [4] awqos
+    output bool [4] awregion
+    //output bool [USER_WIDTH] awuser
+    //output bool [ID_WIDTH] awid
+
+    action write_addr_request : int #(FROM: 0, TO: pow2#(E: ADDR_WIDTH)) _addr {
+        awvalid = true
+        awaddr = _addr
+        awlen    = [false, false, false, false, false, false, false, false] // 0
+        awsize   = [false, true, false] // 4 byte
+        awburst  = [true, false] // incr
+        awlock   = false // NORMAL
+        awcache  = [false, true, false, false] // NORMAL_NON_CACHEABLE_NON_BUFFERABLE
+        awprot   = [false, false, false] // UNPRIV_SECURE_DATA
+        awqos    = [false, false, false, false]
+        awregion = [false, false, false, false]
+        //awuser   = 0
+        //awid     = 0
+
+        trigger write_addr_request_fire
+
+        when awready {
+            write_addr_request_fire()
+        }
+
+    } else {
+        awvalid = false
+    }
+
+    domain w_domain
+    input bool wready
+    output bool wvalid
+    output bool [DATA_WIDTH] wdata
+    output bool [DATA_WIDTH/8] wstrb
+    output bool wlast
+    //output bool [USER_WIDTH] wuser
+
+    action write_data_request : bool [32] _data {
+        wvalid = true
+        wdata = _data
+        wstrb = [true, true, true, true]
+        wlast = true
+        //wuser = 0
+
+        trigger write_data_request_fire
+
+        when wready {
+            write_data_request_fire()
+        }
+
+    } else {
+        wvalid = false
+    }
+
+    domain b_domain
+    output bool bready'0
+    input bool bvalid'0
+    input bool [2] bresp'0
+    //input bool [ID_WIDTH] bid
+    //input bool [USER_WIDTH] buser
+
+    action write_response'0 {
+        bready = true
+
+        trigger write_response_fire'0
+
+        when bvalid {
+            write_response_fire()
+        }
+    } else {
+        bready = false
+    }
+}
