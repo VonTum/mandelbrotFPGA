@@ -190,8 +190,8 @@ module SlowIterator2 #(InitialT, ResultT, ExtraDataT, int COMPUTATION_LATENCY, i
     bool retry_loop = false
 
     trigger may_start'0 {
-        action start'REQUEST_DATA_LATENCY : InitialT initial_data'REQUEST_DATA_LATENCY, ExtraDataT extra_data'REQUEST_DATA_LATENCY {
-            iter_with_initial_data.in(initial_data)
+        action start'REQUEST_DATA_LATENCY : InitialT initial_data_start'REQUEST_DATA_LATENCY, ExtraDataT extra_data'REQUEST_DATA_LATENCY {
+            iter_with_initial_data.in(initial_data_start)
             extra_data_stored = extra_data
         } else {
             retry_loop = true
@@ -242,8 +242,8 @@ module SlowIteratorWithOutputFIFO #(InitialT, ResultT, ExtraDataT, int COMPUTATI
 
     domain request_domain
     trigger may_start'0 {
-        action start'REQUEST_DATA_LATENCY : InitialT initial_data'REQUEST_DATA_LATENCY, ExtraDataT extra_data'REQUEST_DATA_LATENCY {
-            parent.start(initial_data, extra_data)
+        action start'REQUEST_DATA_LATENCY : InitialT initial_data_i'REQUEST_DATA_LATENCY, ExtraDataT extra_data'REQUEST_DATA_LATENCY {
+            parent.start(initial_data_i, extra_data)
         }
     }
     when parent.may_start {
@@ -296,7 +296,7 @@ module MandelbrotSlowIter2 #(ExtraDataT, int INPUT_DATA_LATENCY) {
         iter.start([r, i], extra_data)
     }
 
-    trigger finish'0: int iteration_count'0, ExtraDataT extra_data'0
+    trigger finish'0: int iteration_count'0, ExtraDataT extra_data_o'0
     when iter.finish: int iteration_count, ExtraDataT extra_data {
         finish(iteration_count, extra_data)
     }
@@ -391,10 +391,7 @@ module PixelToComplex #(int WIDTH, int HEIGHT) {
     }
 }
 
-module WholeMandelbrotComputer {
-    gen int WIDTH = 1024
-    gen int HEIGHT = 1024
-    
+module WholeMandelbrotComputer#(int WIDTH, int HEIGHT) {
     ScreenIterator #(WIDTH, HEIGHT) pixel_producer
     SameCycleReadFIFO #(DEPTH: 64, EXTRA_IN_FLIGHT: 2) outputFIFO
     MandelbrotSlowIter2 mandel_iter
@@ -680,7 +677,10 @@ module TapascoTop {
     gen int ADDR_WIDTH = 32
     gen int DATA_WIDTH = 32
     
-    WholeMandelbrotComputerDummy acc
+    gen int WIDTH = 16
+    gen int HEIGHT = 16
+    
+    WholeMandelbrotComputer#(WIDTH, HEIGHT) acc
     Axi4LiteSlave slave
 
     //domain clk
@@ -800,9 +800,14 @@ module TapascoTop {
     state bool write_addr_valid
     state bool write_resp_valid
 
+    when !nreset {
+        write_addr_valid = false
+        write_resp_valid = false
+    }
+
     slave.write_addr_request()
     when slave.write_addr_request_fire : int _addr {
-        write_addr = _addr / 16
+        write_addr = _addr
         write_addr_valid = true
     }
 
@@ -857,12 +862,17 @@ module TapascoTop {
     state bool[DATA_WIDTH] mem_data 
     state bool mem_addr_valid
     state bool mem_data_valid
+
     initial mem_addr_valid = false
     initial mem_data_valid = false
+    when !nreset {
+        mem_addr_valid = false
+        mem_data_valid = false
+    }
 
     when !mem_data_valid & !mem_addr_valid {
         when acc.may_read_px {
-            int addr, int data, bool done = acc.read_px()
+            int data, int addr, bool done = acc.read_px()
             mem_data = transmute_to_bits(data)
             mem_addr = addr
             mem_addr_valid = true
@@ -874,7 +884,7 @@ module TapascoTop {
     }
     
     when mem_addr_valid {
-        mem.write_addr_request(mem_addr * 4)
+        mem.write_addr_request(unsafe_int_cast#(FROM: 0, TO: pow2#(E:32)) (mem_addr * 4))
         when mem.write_addr_request_fire {
             mem_addr_valid = false
         }

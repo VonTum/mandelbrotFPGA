@@ -3,6 +3,7 @@
 
 # SUS codegen files
 verilog_output/
+dot_output/
 
 # Vivado stuff
 mandelbrotFPGA.cache/

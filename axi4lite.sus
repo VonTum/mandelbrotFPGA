@@ -24,12 +24,12 @@ module Axi4LiteSlave {
     output bool [32] rdata
     output bool [2] rresp
 
+    trigger read_response_fire
+
     action read_response : bool [32] _data {
         rvalid = true
         rdata = _data
         rresp = [false, false]
-
-        trigger read_response_fire
 
         when rready {
             read_response_fire()
@@ -123,6 +123,11 @@ module RegisterAxi4LiteSlave #(int NUM_REGS) {
     state int write_addr
     state bool write_addr_valid
     state bool write_resp_valid
+
+    action rst {
+        write_addr_valid = false
+        write_resp_valid = false
+    }
 
     slave.write_addr_request()
     when slave.write_addr_request_fire : int _addr {
