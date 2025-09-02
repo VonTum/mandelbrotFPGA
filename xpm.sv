@@ -127,7 +127,7 @@ xpm_memory_sdpram_inst (
                                     // doutb to the value specified by parameter READ_RESET_VALUE_B.
 
    .sleep(1'b0),                   // 1-bit input: sleep signal to enable the dynamic power saving feature.
-   .wea()                        // WRITE_DATA_WIDTH_A/BYTE_WRITE_WIDTH_A-bit input: Write enable vector for port A input data port dina. 1 bit
+   .wea(write)                        // WRITE_DATA_WIDTH_A/BYTE_WRITE_WIDTH_A-bit input: Write enable vector for port A input data port dina. 1 bit
                                     // wide when word-wide writes are used. In byte-wide write configurations, each bit controls the writing one
                                     // byte of dina to address addra. For example, to synchronously write only bits [15-8] of dina when
                                     // WRITE_DATA_WIDTH_A is 32, wea would be 4'b0010.

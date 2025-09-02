@@ -61,7 +61,7 @@ module SimulateTapascoTop;
   // Clock / Reset
   // -----------------------
   logic clk = 0;
-  logic nreset = 0;
+  logic resetn = 0;
   always #5 clk = ~clk;
 
   // -----------------------
@@ -121,7 +121,7 @@ module SimulateTapascoTop;
   // -----------------------
   TapascoTop dut (
     .clk(clk),
-    .nreset(nreset),
+    .resetn(resetn),
     .intr(intr),
 
     // AXI-Lite
@@ -221,7 +221,7 @@ module SimulateTapascoTop;
 
     for (int y = 0; y < HEIGHT; y++)
       for (int x = 0; x < WIDTH; x++)
-        mem_array[y][x] = '0;
+        mem_array[y][x] = 'x;
 
     forever begin
       @(posedge clk);
@@ -262,15 +262,16 @@ module SimulateTapascoTop;
     ctrl_bready  = 0;
 
     // Reset pulse
-    nreset = 0;
-    repeat (10) @(posedge clk);
-    nreset = 1;
+    resetn = 0;
+    repeat (100) @(posedge clk);
+    resetn = 1;
 
     // Program registers (16B aligned)
     axi_lite_write(32'h0000_0020, 32'h0000_0000); // ORIGIN_R
     axi_lite_write(32'h0000_0030, 32'h0000_0000); // ORIGIN_I
     //axi_lite_write(32'h0000_0040, 32'h3d80_0000); // SCALE = 0.0625
     axi_lite_write(32'h0000_0040, 32'h3e80_0000); // SCALE = 0.25
+    //axi_lite_write(32'h0000_0040, 32'h3f80_0000); // SCALE = 1.0
     axi_lite_write(32'h0000_0000, 32'h0000_0001); // START
 
     // Let it run

@@ -6,9 +6,10 @@
     # --debug print-abstract\
     # --debug print-concrete\
     # --debug dot-latency-problem\
+    # --debug dot-latency-infer\
     # --debug dot-svg\
     # --debug dot-png\
-    # --debug-whitelist Axi4LiteSlave\
+    # --debug-whitelist MandelbrotParallelWhile\
     # --debug-whitelist SlowIterator2\
     # --debug-whitelist SlowIteratorState\
     # --debug-whitelist ActionCrossDomain\
