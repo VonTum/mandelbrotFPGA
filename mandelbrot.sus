@@ -70,19 +70,21 @@ module SlowIterator #(T, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
 
 /// |z| >= 2
 module MandelbrotStep {
-    action MandelbrotStep : float z_r, float z_i, float c_r, float c_i -> float new_z_r, float new_z_i, bool is_done {
-        float z_sq_r = fp_sub(fp_mul(z_r, z_r), fp_mul(z_i, z_i))
-        float z_ri = fp_mul(z_r, z_i)
-        float z_sq_i = fp_add(z_ri, z_ri)
+    interface MandelbrotStep : 
+        float z_r, float z_i, float c_r, float c_i -> 
+        float new_z_r, float new_z_i, bool is_done
 
-        new_z_r = fp_add(z_sq_r, c_r)
-        new_z_i = fp_add(z_sq_i, c_i)
+    float z_sq_r = fp_sub(fp_mul(z_r, z_r), fp_mul(z_i, z_i))
+    float z_ri = fp_mul(z_r, z_i)
+    float z_sq_i = fp_add(z_ri, z_ri)
 
-        float radius_sq = fp_add(fp_mul(new_z_r, new_z_r), fp_mul(new_z_i, new_z_i))
+    new_z_r = fp_add(z_sq_r, c_r)
+    new_z_i = fp_add(z_sq_i, c_i)
 
-        float four = fp_fromint(4)
-        is_done = fp_gt(radius_sq, four)
-    }
+    float magnitude_sq = fp_add(fp_mul(new_z_r, new_z_r), fp_mul(new_z_i, new_z_i))
+
+    float four = fp_fromint(4)
+    is_done = fp_gt(magnitude_sq, four)
 }
 
 module MandelbrotSlowIter {
@@ -340,86 +342,76 @@ module MandelbrotSlowIter2 #(ExtraDataT, int INPUT_DATA_LATENCY) {
 module ScreenIterator #(int WIDTH, int HEIGHT) {
     state int #(FROM: 0, TO: WIDTH) cur_x
     state int #(FROM: 0, TO: HEIGHT) cur_y
-    output state bool may_next
     
+    output state bool may_next
+    action next : -> int #(FROM: 0, TO: WIDTH) x, int #(FROM: 0, TO: HEIGHT) y {
+        x = cur_x
+        y = cur_y
+
+        when cur_x == WIDTH - 1 {
+            when cur_y == HEIGHT - 1 {
+                may_next = false
+            }
+            cur_y = (cur_y + 1) % HEIGHT
+        }
+        cur_x = (cur_x + 1) % WIDTH
+    }
+
+    output bool may_start = !may_next
     action start {
         cur_x = 0
         cur_y = 0
         may_next = true
     }
-
-    bool x_at_end = cur_x == WIDTH - 1
-    bool y_at_end = cur_y == HEIGHT - 1
-
-    output bool last = false
-    
-    output bool may_start = !may_next
-    action next : -> int #(FROM: 0, TO: WIDTH) x, int #(FROM: 0, TO: HEIGHT) y {
-        x = cur_x
-        y = cur_y
-
-        when x_at_end {
-            cur_x = 0
-            when y_at_end {
-                last = true
-            } else {
-                cur_y = unsafe_int_cast#(FROM: 0, TO: HEIGHT) (cur_y + 1)
-            }
-        } else {
-            cur_x = unsafe_int_cast#(FROM: 0, TO: WIDTH) (cur_x + 1)
-        }
-
-        may_next = !x_at_end | !y_at_end
-    }
     
     action rst {
-        cur_x = WIDTH - 1
-        cur_y = HEIGHT - 1
         may_next = false
     }
 }
 
 module PixelToComplex #(int WIDTH, int HEIGHT) {
-    action PixelToComplex : 
+    interface PixelToComplex : 
         float origin_r,
         float origin_i,
         float step,
         int#(FROM: 0, TO: WIDTH) px_x,
-        int#(FROM: 0, TO: HEIGHT) px_y -> float r, float i {
-        r = fp_fmadd(step, fp_fromint(px_x - WIDTH / 2), origin_r)
-        i = fp_fmadd(step, fp_fromint(px_y - HEIGHT / 2), origin_i)
-    }
+        int#(FROM: 0, TO: HEIGHT) px_y -> float r, float i
+
+    int x = px_x - WIDTH / 2
+    int y = px_y - HEIGHT / 2
+    r = fp_fmadd(step, fp_fromint(x), origin_r)
+    i = fp_fmadd(step, fp_fromint(y), origin_i)
 }
 
 module WholeMandelbrotComputer#(int WIDTH, int HEIGHT) {
     ScreenIterator #(WIDTH, HEIGHT) pixel_producer
     SameCycleReadFIFO #(DEPTH: 64, EXTRA_IN_FLIGHT: 2) outputFIFO
-    MandelbrotSlowIter2 mandel_iter
+    MandelbrotSlowIter2 while_loop
     
     action rst'0 {
         pixel_producer.rst()
-        mandel_iter.rst()
+        while_loop.rst()
         outputFIFO.rst()
     }
 
 
-    input float origin_r_st
-    input float origin_i_st
-    input float scale_st
+    input float origin_r
+    input float origin_i
+    input float step
 
     output bool may_start = pixel_producer.may_start
     action start {
         pixel_producer.start()
     }
     
-    tuple2 mandel_iter_extra_data
+    tuple2 while_loop_extra_data
     when pixel_producer.may_next & outputFIFO.may_push {
-        when mandel_iter.may_start {
+        when while_loop.may_start {
             int x, int y = pixel_producer.next()
 
-            float r, float i = PixelToComplex(origin_r_st, origin_i_st, scale_st, x, y)
+            float r, float i = PixelToComplex(origin_r, origin_i, step, x, y)
 
-            mandel_iter.start(r, i, mandel_iter_extra_data.pack(x, y))
+            while_loop.start(r, i, while_loop_extra_data.pack(x, y))
         }
     }
 
@@ -427,7 +419,7 @@ module WholeMandelbrotComputer#(int WIDTH, int HEIGHT) {
     trigger may_read_px'0 {
         action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:32)) iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr'0 {
             iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT)] extra_data = data.unpack(outputFIFO.pop())
-            int x, int y = mandel_iter_extra_data.unpack(extra_data)
+            int x, int y = while_loop_extra_data.unpack(extra_data)
             addr = y * WIDTH + x
         }
     }
@@ -435,20 +427,13 @@ module WholeMandelbrotComputer#(int WIDTH, int HEIGHT) {
         may_read_px()
     }
 
-    when mandel_iter.finish : int iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT)] extra_data {
+    when while_loop.finish : int iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT)] extra_data {
         outputFIFO.push(data.pack(iter_count, extra_data))
     }
 }
 
 /// The order in which results arrive is not the same as the order of inputs, due to some taking more cycles to execute. 
 module ParallelWhile #(int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
-    domain clk
-
-    CrossActionNoData rst_act
-    action rst {
-        rst_act.in()
-    }
-
     domain iter_domain
     gen int TOTAL_CYCLES = COMPUTATION_LATENCY + REQUEST_DATA_LATENCY
     state int#(FROM: 0, TO: TOTAL_CYCLES) cur_iter_st
@@ -459,18 +444,14 @@ module ParallelWhile #(int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
 
     // Increment by one every cycle, no matter if we're processing or not
     cur_iter_st = (cur_iter_st + 1) % TOTAL_CYCLES
-    trigger iter'0 : int #(FROM: 0, TO: noinfer#(V: TOTAL_CYCLES)) cur_iter'0 {
+
+    trigger iter'0 : int #(FROM: 0, TO: TOTAL_CYCLES) cur_iter'0 {
         action continue'COMPUTATION_LATENCY {
             should_continue = true
         } else {
             should_continue = false
         }
     } else {
-        should_continue = false
-    }
-
-    // Reset, overwrite valid_slots completely
-    when rst_act.out {
         should_continue = false
     }
 
@@ -484,6 +465,16 @@ module ParallelWhile #(int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
 
     when !do_continue {
         may_start()
+    }
+
+    domain clk
+    CrossActionNoData rst_act
+    action rst {
+        rst_act.in()
+    }
+    // Reset, overwrite valid_slots completely
+    when rst_act.out {
+        should_continue = false
     }
 }
 
@@ -506,6 +497,7 @@ module ParallelWhileState #(T, int NUM_PARALLEL_STATES, int LATENCY) {
         st.write(cur_iter_id, new)
     }
 }
+
 module ParallelWhileStore #(T, int NUM_PARALLEL_STATES) {
     RAM #(DEPTH: NUM_PARALLEL_STATES) st
 
@@ -523,19 +515,6 @@ module MandelbrotParallelWhile #(ExtraDataT, int INPUT_DATA_LATENCY) {
     gen int MAX_ITERATION = 100
 
     ParallelWhile iter
-
-    domain clk
-    action rst'0 {
-        iter.rst()
-    }
-    
-    trigger may_start'-INPUT_DATA_LATENCY
-    when iter.may_start {
-        may_start()
-    }
-
-    trigger finish: int iteration_count, ExtraDataT extra_data_o
-
     ParallelWhileState #(T: type float) z_r
     ParallelWhileState #(T: type float) z_i
     ParallelWhileStore #(T: type float) c_r
@@ -543,6 +522,10 @@ module MandelbrotParallelWhile #(ExtraDataT, int INPUT_DATA_LATENCY) {
     ParallelWhileState #(T: type int #(FROM: 0, TO: MAX_ITERATION)) iteration
     ParallelWhileStore #(T: type ExtraDataT) extra_data_st
     
+    trigger may_start'-INPUT_DATA_LATENCY
+    when iter.may_start {
+        may_start()
+    }
     float zero = fp_fromint(0)
     action start'0 : float r'0, float i'0, ExtraDataT extra_data'0 {
         iter.start()
@@ -553,6 +536,7 @@ module MandelbrotParallelWhile #(ExtraDataT, int INPUT_DATA_LATENCY) {
         iteration.init(0)
         extra_data_st.init(extra_data)
     }
+    trigger finish: int iteration_count, ExtraDataT extra_data_o
 
     when iter.iter : int sentinel {
         z_r.link(sentinel)
@@ -573,35 +557,39 @@ module MandelbrotParallelWhile #(ExtraDataT, int INPUT_DATA_LATENCY) {
             iteration.new = unsafe_int_cast#(FROM: 0, TO: MAX_ITERATION)(iteration.old + 1)
         }
     }
+
+    action rst'0 {
+        iter.rst()
+    }
 }
 
 module WholeMandelbrotComputerFast#(int WIDTH, int HEIGHT) {
-    ScreenIterator #(WIDTH, HEIGHT) pixel_producer
+    ScreenIterator #(WIDTH, HEIGHT) screen_iter
     SameCycleReadFIFO #(DEPTH: 512, EXTRA_IN_FLIGHT: 200) outputFIFO
-    MandelbrotParallelWhile mandel_iter
+    MandelbrotParallelWhile while_loop
     action rst'0 {
-        pixel_producer.rst()
-        mandel_iter.rst()
+        screen_iter.rst()
+        while_loop.rst()
         outputFIFO.rst()
     }
 
-    input float origin_r_st
-    input float origin_i_st
-    input float scale_st
+    input float origin_r
+    input float origin_i
+    input float step
 
-    output bool may_start = pixel_producer.may_start
+    output bool may_start = screen_iter.may_start
     action start {
-        pixel_producer.start()
+        screen_iter.start()
     }
     
-    tuple2 mandel_iter_extra_data
-    when pixel_producer.may_next & outputFIFO.may_push {
-        when mandel_iter.may_start {
-            int x, int y = pixel_producer.next()
+    tuple2 while_loop_extra_data
+    when screen_iter.may_next & outputFIFO.may_push {
+        when while_loop.may_start {
+            int x, int y = screen_iter.next()
 
-            float r, float i = PixelToComplex(origin_r_st, origin_i_st, scale_st, x, y)
+            float r, float i = PixelToComplex(origin_r, origin_i, step, x, y)
 
-            mandel_iter.start(r, i, mandel_iter_extra_data.pack(x, y))
+            while_loop.start(r, i, while_loop_extra_data.pack(x, y))
         }
     }
 
@@ -609,7 +597,7 @@ module WholeMandelbrotComputerFast#(int WIDTH, int HEIGHT) {
     trigger may_read_px'0 {
         action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:32)) iter_count'0, int#(FROM: 0, TO: pow2#(E: 32)) addr'0 {
             iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT)] extra_data = data.unpack(outputFIFO.pop())
-            int x, int y = mandel_iter_extra_data.unpack(extra_data)
+            int x, int y = while_loop_extra_data.unpack(extra_data)
             addr = y * WIDTH + x
         }
     }
@@ -617,7 +605,7 @@ module WholeMandelbrotComputerFast#(int WIDTH, int HEIGHT) {
         may_read_px()
     }
 
-    when mandel_iter.finish : int iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT)] extra_data {
+    when while_loop.finish : int iter_count, bool[clog2#(V: WIDTH) + clog2#(V: HEIGHT)] extra_data {
         outputFIFO.push(data.pack(iter_count, extra_data))
     }
 }
@@ -626,9 +614,9 @@ module WholeMandelbrotComputerDummy {
     action rst'0 {
     }
 
-    input float origin_r_st'0
-    input float origin_i_st'0
-    input float scale_st'0
+    input float origin_r'0
+    input float origin_i'0
+    input float step'0
 
     state bool running'0
     initial running = false
@@ -670,8 +658,8 @@ module TapascoTop {
     gen int ADDR_WIDTH = 32
     gen int DATA_WIDTH = 32
     
-    gen int WIDTH = 16
-    gen int HEIGHT = 16
+    gen int WIDTH = 64
+    gen int HEIGHT = 64
     
     //WholeMandelbrotComputer#(WIDTH, HEIGHT) slow_acc
     WholeMandelbrotComputerFast#(WIDTH, HEIGHT) acc
@@ -850,9 +838,9 @@ module TapascoTop {
         }
     }
 
-    acc.origin_r_st = transmute_from_bits(register0)
-    acc.origin_i_st = transmute_from_bits(register1)
-    acc.scale_st = transmute_from_bits(register2)
+    acc.origin_r = transmute_from_bits(register0)
+    acc.origin_i = transmute_from_bits(register1)
+    acc.step = transmute_from_bits(register2)
 
     // Memory Access
     state int mem_addr 

@@ -1,13 +1,10 @@
 {
   "sus_lsp.executable_path": "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler",
-  // Doesn't work, I guess I need to parse ${workspaceFolder} in the extension? 
-  // "sus_lsp.executable_path": "${workspaceFolder}/target/release/sus_compiler",
   "sus_lsp.tcp_port": 25000,
   "sus_lsp.args": [
     "--lsp",
-    // Tracking down slow compilations
-    "--kill-timeout", "2.0",
-    //, "--upto", "typecheck"
+    "--kill-timeout",
+    "2.0"
   ],
   "editor.lineHeight": 0,
   "editor.inlayHints.enabled": "offUnlessPressed",
