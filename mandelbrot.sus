@@ -1,127 +1,4 @@
 
-
-
-module staticForLoop #(int TO) {
-
-    state int #(FROM: 0, TO) cur_iter
-    state bool cur_iter_valid
-
-    action start {
-        cur_iter = 0
-        cur_iter_valid = true
-    }
-    trigger iter : int #(FROM: 0, TO) cur
-    when cur_iter_valid {
-        iter(cur_iter)
-        when cur_iter == TO - 1 {
-            cur_iter_valid = false
-        } else {
-            cur_iter = cur_iter + 1
-        }
-    }
-}
-
-module SlowIterator #(T, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
-    domain iter_domain
-    LatencyOffsetAction #(OFFSET : -COMPUTATION_LATENCY) next_iter_loop
-    CrossDomain iter_is_finised
-    CrossAction iter_with_initial_data
-    iter_is_finised.in = false
-    trigger iter'0 : T data'0 {
-        action next_iter'COMPUTATION_LATENCY : T new_data'COMPUTATION_LATENCY {
-            next_iter_loop.in(new_data)
-        } else {
-            iter_is_finised.in = true
-        }
-    }
-    when next_iter_loop.out : T loop_data {
-        iter(loop_data)
-    }
-    when iter_with_initial_data.out : T initial_data_cross {
-        iter(initial_data_cross)
-    }
-
-    domain request_domain
-
-    bool retry_loop = false
-    trigger request_new_data'0 {
-        action start_iteration'REQUEST_DATA_LATENCY : T initial_data'REQUEST_DATA_LATENCY {
-            iter_with_initial_data.in(initial_data_cross)
-        } else {
-            retry_loop = true
-        }
-    }
-
-    state bool last_reset_was_true
-    action reset {
-        last_reset_was_true = true
-    } else {
-        // Send down a one-clock pulse on reset release to get request_new_data started
-        when last_reset_was_true | iter_is_finised.out | LatencyOffset #(OFFSET: -REQUEST_DATA_LATENCY)(retry_loop) {
-            request_new_data()
-        }
-        last_reset_was_true = false
-    }
-}
-
-
-
-/// new_z = z² + c (z_0 = 0)
-
-/// |z| >= 2
-module MandelbrotStep {
-    interface MandelbrotStep : 
-        float z_r, float z_i, float c_r, float c_i -> 
-        float new_z_r, float new_z_i, bool is_done
-
-    float z_sq_r = fp_sub(fp_mul(z_r, z_r), fp_mul(z_i, z_i))
-    float z_ri = fp_mul(z_r, z_i)
-    float z_sq_i = fp_add(z_ri, z_ri)
-
-    new_z_r = fp_add(z_sq_r, c_r)
-    new_z_i = fp_add(z_sq_i, c_i)
-
-    float magnitude_sq = fp_add(fp_mul(new_z_r, new_z_r), fp_mul(new_z_i, new_z_i))
-
-    float four = fp_fromint(4)
-    is_done = fp_gt(magnitude_sq, four)
-}
-
-module MandelbrotSlowIter {
-    domain request_domain
-    SlowIterator iter
-
-    trigger request_new_point'0
-
-    when iter.request_new_data {
-        request_new_point()
-    }
-
-    action start_iteration_for_new_point'4 : float x'4, float y'4 {
-        float zero = transmute #(T1: type int#(FROM: 0, TO: pow2#(E: 32)))(0)
-        float[4] initial_state = [zero, zero, x, y]
-
-        iter.start_iteration(initial_state)
-    }
-
-    domain iter_domain
-    trigger done
-    when iter.iter : float[4] state {
-        float z_r = state[0]
-        float z_i = state[1]
-        float c_r = state[2]
-        float c_i = state[3]
-
-        float new_z_r, float new_z_i, bool is_done = MandelbrotStep(z_r, z_i, c_r, c_i)
-
-        when is_done {
-            done()
-        } else {
-            iter.next_iter([new_z_r, new_z_i, c_r, c_i])
-        }
-    }
-}
-
 module tuple2 #(T1, T2) {
     gen int SIZE1 = sizeof#(T: type T1)
     gen int SIZE2 = sizeof#(T: type T2)
@@ -155,6 +32,29 @@ module tuple3 #(T1, T2, T3) {
     v1_o = transmute_from_bits(packed_i[:SIZE1])
     v2_o = transmute_from_bits(packed_i[SIZE1:SIZE1+SIZE2])
     v3_o = transmute_from_bits(packed_i[SIZE1+SIZE2:])
+}
+
+
+
+/// new_z = z² + c (z_0 = 0)
+
+/// |z| >= 2
+module MandelbrotStep {
+    interface MandelbrotStep : 
+        float z_r, float z_i, float c_r, float c_i -> 
+        float new_z_r, float new_z_i, bool is_done
+
+    float z_sq_r = fp_sub(fp_mul(z_r, z_r), fp_mul(z_i, z_i))
+    float z_ri = fp_mul(z_r, z_i)
+    float z_sq_i = fp_add(z_ri, z_ri)
+
+    new_z_r = fp_add(z_sq_r, c_r)
+    new_z_i = fp_add(z_sq_i, c_i)
+
+    float magnitude_sq = fp_add(fp_mul(new_z_r, new_z_r), fp_mul(new_z_i, new_z_i))
+
+    float four = fp_fromint(4)
+    is_done = fp_gt(magnitude_sq, four)
 }
 
 module SlowIterator2 #(InitialT, ResultT, ExtraDataT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
@@ -220,7 +120,7 @@ module SlowIterator2 #(InitialT, ResultT, ExtraDataT, int COMPUTATION_LATENCY, i
     }
 }
 
-module SlowIteratorWithOutputFIFO #(InitialT, ResultT, ExtraDataT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY, int MAX_ITERATIONS) {
+module SlowIteratorWithOutputFIFO #(InitialT, ResultT, ExtraDataT, int COMPUTATION_LATENCY, int REQUEST_DATA_LATENCY) {
     domain clk
 
     SlowIterator2 parent
@@ -610,49 +510,6 @@ module WholeMandelbrotComputerFast#(int WIDTH, int HEIGHT) {
     }
 }
 
-module WholeMandelbrotComputerDummy {
-    action rst'0 {
-    }
-
-    input float origin_r'0
-    input float origin_i'0
-    input float step'0
-
-    state bool running'0
-    initial running = false
-
-    state int#(FROM: 0, TO: pow2#(E:32)) addr'0
-    state int#(FROM: 0, TO: pow2#(E:16)) data'0
-    state int#(FROM: 0, TO: pow2#(E:4)) wait'0
-    initial addr = 0
-    initial data = 0
-    initial wait = 0
-
-    output bool may_start = !running
-    action start'0 {
-        running = true
-        wait = 1
-    }
-
-    trigger may_read_px'0 {
-        action read_px'0 : -> int#(FROM: 0, TO: pow2#(E:16)) _data'0, int#(FROM: 0, TO: pow2#(E: 32)) _addr'0, bool _done'0 {
-            _addr = addr
-            _data = data
-            _done = addr == 100
-            data = unsafe_int_cast#(FROM: 0, TO: pow2#(E:16))(data + 2)
-            addr = unsafe_int_cast#(FROM: 0, TO: pow2#(E:32))(addr + 1)
-            when addr != 100 {
-                wait = 1
-            }
-        }
-    }
-    when wait != 0 {
-        wait = unsafe_int_cast#(FROM: 0, TO: pow2#(E:4))(wait + 1)
-    } else {
-        may_read_px()
-    }
-}
-
 module TapascoTop {
     gen int NUM_REGS = 3
     gen int ADDR_WIDTH = 32
@@ -664,6 +521,9 @@ module TapascoTop {
     //WholeMandelbrotComputer#(WIDTH, HEIGHT) slow_acc
     WholeMandelbrotComputerFast#(WIDTH, HEIGHT) acc
     Axi4LiteSlave slave
+
+    // unused, even though it should be. Naja
+    bool _may_start = acc.may_start
 
     //domain clk
     input bool resetn'0
@@ -708,9 +568,7 @@ module TapascoTop {
     output bool[2] ctrl_bresp = slave.bresp
 
 
-    state bool [32] register0
-    state bool [32] register1
-    state bool [32] register2
+    state bool[32][NUM_REGS] registers
 
     //domain aw_domain
     Axi4Master #(ADDR_WIDTH, DATA_WIDTH) mem
@@ -765,17 +623,15 @@ module TapascoTop {
             return_valid = false
         }
     }
-    when slave.read_request_fire : int _addr {
-        when _addr == 0 {
+    when slave.read_request_fire : int rd_addr {
+        when rd_addr == 0 {
             return_value = Repeat(false)
-        } else when _addr == 16 {
+        } else when rd_addr == 16 {
             return_value = Repeat(false)
-        } else when _addr == 32 {
-            return_value = register0
-        } else when _addr == 48 {
-            return_value = register1
         } else {
-            return_value = register2
+            int reg_id = unsafe_int_cast#(FROM: 0, TO: NUM_REGS)((rd_addr - 32) / 16)
+
+            return_value = registers[reg_id]
         }
         return_valid = true
     }
@@ -804,25 +660,12 @@ module TapascoTop {
                     total_pixels_seen = 0
                 }
             } else {
-                bool[32] tmp = register0
-                when write_addr == 48 {
-                    tmp = register1
-                } else when write_addr == 64 {
-                    tmp = register2
-                }
+                int reg_id = unsafe_int_cast#(FROM: 0, TO: NUM_REGS)((write_addr - 32) / 16)
 
                 for int i in 0..4 {
                     when _strb[i] {
-                        tmp[i*8+:8] = _data[i*8+:8]
+                        registers[reg_id][i*8+:8] = _data[i*8+:8]
                     }
-                }
-
-                when write_addr == 32 {
-                    register0 = tmp
-                } else when write_addr == 48 {
-                    register1 = tmp
-                } else when write_addr == 64 {
-                    register2 = tmp
                 }
             }
 
@@ -838,9 +681,9 @@ module TapascoTop {
         }
     }
 
-    acc.origin_r = transmute_from_bits(register0)
-    acc.origin_i = transmute_from_bits(register1)
-    acc.step = transmute_from_bits(register2)
+    acc.origin_r = transmute_from_bits(registers[0])
+    acc.origin_i = transmute_from_bits(registers[1])
+    acc.step = transmute_from_bits(registers[2])
 
     // Memory Access
     state int mem_addr 
